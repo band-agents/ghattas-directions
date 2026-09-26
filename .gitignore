@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-single/
+dist-artifact/
+scripts/pdf-logos/node_modules/
+scripts/pdf-logos/*.svg
+scripts/pdf-logos/*.json
+*.tsbuildinfo
