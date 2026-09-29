@@ -44,7 +44,7 @@ export function PorcelainHero() {
   const pt = (deg: number, r = RING) => [CX + r * Math.cos((deg * Math.PI) / 180), CY + r * Math.sin((deg * Math.PI) / 180)];
   const [sx, sy] = pt(gapTo), [ex, ey] = pt(gapFrom);
   const ringPath = `M ${sx} ${sy} A ${RING} ${RING} 0 1 1 ${ex} ${ey}`;
-  const phrase = "EXPERTISE   ·   ACCESS   ·   PRIVACY   ·   ";
+  const phrase = "EXPERTISE  ·  ACCESS  ·  PRIVACY  ·  TECHNOLOGY  ·  ";
   const circ = 2 * Math.PI * TEXT_R;
 
   return (

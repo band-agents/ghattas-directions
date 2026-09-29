@@ -14,17 +14,29 @@ import { ArrowRight, ArrowUpRight, CalendarCheck, Menu, MessageCircle, X } from 
 
 import { Lockup, Mark, Wordmark } from "@/brand/Logo";
 import {
-  ARTICLES, BOOK, BRAND, EXPERIENCE, JOURNEY, NAV, PASSAGE, QUICK, RECORD, REVIEWS, SERVICES, SIGNATURE, STATS,
+  ARTICLES, BOOK, BRAND, CORE_SERVICES, GROUPS, JOURNEY, NAV, PASSAGE, PLAN, RECORD, REVIEWS,
+  SIGNATURE, SPECIALTIES, STATS, type Group,
 } from "@/content";
 import { CountUp, LivePlayer, Reveal, RevealGroup, RevealItem, SplitText, scrollToId } from "@/lib/motion";
 import { useHeader } from "@/lib/useHeader";
 import { ASCEND, AscendHero } from "@/remotion/AscendHero";
 import { ROUTE, RouteMap, type RouteTheme } from "@/remotion/RouteMap";
-import { GOLD } from "@/brand/tokens";
+import { GLYPH, ServiceGlyph, type GlyphTheme } from "@/remotion/ServiceGlyph";
+import { GOLD, NAVY } from "@/brand/tokens";
 import portrait from "@/media/dr-portrait.webp";
 import "./ascend.css";
 
 const LOGO = "arrow" as const;
+
+/* Two glyph themes: the cards alternate navy and porcelain. */
+const GLYPH_ON_NAVY: GlyphTheme = {
+  line: GOLD[200], accent: GOLD[300], dim: "rgba(240,205,157,0.16)", text: "rgba(255,253,250,0.6)", ink: NAVY[850],
+  font: "'Archivo', sans-serif", logo: "arrow", tight: true,
+};
+const GLYPH_ON_PAPER: GlyphTheme = {
+  line: NAVY[850], accent: GOLD.ink, dim: "rgba(15,20,29,0.12)", text: NAVY[600], ink: "#FFFDFA",
+  font: "'Archivo', sans-serif", logo: "arrow", tight: true,
+};
 
 const ROUTE_THEME: RouteTheme = {
   line: "rgba(234,201,152,0.24)", pulse: GOLD[200], city: GOLD[300], label: "#FFFDFA",
@@ -39,7 +51,7 @@ export function Ascend() {
       <main>
         <Hero />
         <Ticker />
-        <Quick />
+        <Services />
         <Treat />
         <Care />
         <Visit />
@@ -64,7 +76,7 @@ function Header() {
     <header className={`as-head${scrolled ? " is-solid" : ""}`}>
       <div className="as-wrap as-head-in">
         <button className="as-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Ghattas Clinic, back to top">
-          <Lockup logo={LOGO} height={36} mark="brushed" name="#FFFDFA" sub={GOLD[300]} />
+          <Lockup logo={LOGO} height={42} mark="brushed" name="#FFFDFA" sub={GOLD[300]} />
         </button>
         <nav className="as-links" aria-label="Sections">
           {NAV.map((n) => <button key={n.target} onClick={() => go(n.target)}>{n.label}</button>)}
@@ -104,12 +116,11 @@ function Hero() {
       <div className="as-wrap as-hero-grid">
         <div className="as-hero-copy">
           <Reveal y={12}><Label tone="light">By appointment only · Sheikh Zayed</Label></Reveal>
-          <SplitText as="h1" onMount delay={0.1} each={0.06} text={BOOK.tagline} accent={["expertise"]} className="as-h1" />
+          <SplitText as="h1" onMount delay={0.1} each={0.06} text={PLAN.slogan} accentFrom={4} className="as-h1" />
           <Reveal delay={0.45} y={16}>
             <p className="as-lead">
-              The private practice of {BRAND.doctor}, founder of {BRAND.institution}, with more than {BRAND.years} years
-              of clinical experience. The direct route to his expertise: one patient at a time, a private entrance, and
-              the consultant himself from the first visit to the last.
+              {PLAN.bioShort} Led by {BRAND.doctor}, {BRAND.title.toLowerCase()} and founder of {BRAND.institution},
+              with more than {BRAND.years} years of clinical experience.
             </p>
           </Reveal>
           <Reveal delay={0.55} y={16} className="as-hero-cta">
@@ -134,7 +145,7 @@ function Hero() {
 }
 
 function Ticker() {
-  const words = [...EXPERIENCE.map((e) => e.title), "Signature Care"];
+  const words = [...BOOK.values, "Men's Health & Beyond", "Signature Care"];
   return (
     <div className="as-ticker" aria-hidden>
       <div className="as-ticker-track">
@@ -146,49 +157,88 @@ function Ticker() {
   );
 }
 
-/* ── Quick routes ─────────────────────────────────────────── */
+/* ── Your health, your journey ───────────────────────────── */
 
-function Quick() {
+function Services() {
   return (
-    <section className="as-sec as-quick" id="quick" aria-label="Quick routes">
-      <RevealGroup className="as-wrap as-quick-row" each={0.07}>
-        {QUICK.map((q) => (
-          <RevealItem key={q.id}>
-            <button className="as-tile as-cut" onClick={() => scrollToId(q.target)}>
-              <ArrowUpRight size={26} className="as-tile-a" />
-              <span className="as-tile-t">{q.title}</span>
-              <span className="as-tile-s">{q.text}</span>
-            </button>
-          </RevealItem>
-        ))}
-      </RevealGroup>
+    <section className="as-sec as-svcs-sec" id="services">
+      <div className="as-wrap">
+        <div className="as-sec-head as-svcs-head">
+          <div>
+            <Label>Your health, your journey</Label>
+            <SplitText text="Your Health, Your Journey." className="as-h2" accentFrom={2} />
+          </div>
+          <Reveal delay={0.1}>
+            <p className="as-lead">
+              A complete healthcare experience designed around the modern man: the four core services patients
+              engage with first.
+            </p>
+          </Reveal>
+        </div>
+        <RevealGroup className="as-svcs" each={0.1}>
+          {CORE_SERVICES.map((sv, i) => {
+            const navy = i === 0 || i === 3; // a diagonal, like the mark
+            return (
+              <RevealItem as="article" key={sv.id} className={`as-svc as-cut${navy ? " is-navy" : ""}`}>
+                <div className="as-svc-top">
+                  <span className="as-svc-n u-tnum">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="as-svc-art">
+                    <LivePlayer
+                      component={ServiceGlyph} inputProps={{ ...(navy ? GLYPH_ON_NAVY : GLYPH_ON_PAPER), kind: sv.id }}
+                      width={GLYPH.width} height={GLYPH.height} frames={GLYPH.frames} still={40}
+                      label={`${sv.name}: ${sv.line}`}
+                    />
+                  </div>
+                </div>
+                <Label tone={navy ? "light" : undefined}>{sv.kicker}</Label>
+                <h3>{sv.name}</h3>
+                <p className="as-svc-line">{sv.line}</p>
+                <p className="as-svc-text">{sv.body}</p>
+                <ul className="as-svc-points">{sv.points.map((pt) => <li key={pt} className="as-cut">{pt}</li>)}</ul>
+                <button className={`as-btn ${navy ? "as-btn-gold" : "as-btn-navy"}`} onClick={() => scrollToId(sv.target)}>
+                  {sv.cta} <ArrowUpRight size={16} />
+                </button>
+              </RevealItem>
+            );
+          })}
+        </RevealGroup>
+      </div>
     </section>
   );
 }
 
-/* ── What we treat ────────────────────────────────────────── */
+/* ── Men's Health & Beyond ────────────────────────────────── */
+
+const GROUP_ORDER: Group[] = ["core", "beyond"];
 
 function Treat() {
   return (
     <section className="as-sec" id="treat">
       <div className="as-wrap">
         <div className="as-sec-head">
-          <Label>What we treat</Label>
-          <SplitText text="Six services. One consultant reading all of it." className="as-h2" accentFrom={2} />
+          <Label>Men's health &amp; beyond</Label>
+          <SplitText text="Complete care for the modern man." className="as-h2" accentFrom={2} />
         </div>
-        <RevealGroup className="as-services" each={0.06}>
-          {SERVICES.map((s) => (
-            <RevealItem as="article" key={s.id} className="as-service as-cut">
-              <div className="as-service-top">
-                <span className="as-service-min u-tnum">{s.minutes}<small>min</small></span>
-                <ArrowUpRight size={22} className="as-service-a" />
-              </div>
-              <h3>{s.name}</h3>
-              <p className="as-service-sum">{s.summary}</p>
-              <p className="as-service-det">{s.detail}</p>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        {GROUP_ORDER.map((gk) => (
+          <div key={gk} className="as-group">
+            <Reveal className="as-group-head">
+              <h3>{GROUPS[gk].title}</h3>
+              <p>{GROUPS[gk].note}</p>
+            </Reveal>
+            <RevealGroup className="as-services" each={0.05}>
+              {SPECIALTIES.filter((sp) => sp.group === gk).map((sp) => (
+                <RevealItem as="article" key={sp.id} className={`as-service as-cut${gk === "core" ? " is-core" : ""}`}>
+                  <div className="as-service-top">
+                    <span className="as-chip as-cut">{gk === "core" ? BRAND.doctorShort : GROUPS[gk].by}</span>
+                    <ArrowUpRight size={22} className="as-service-a" />
+                  </div>
+                  <h4>{sp.name}</h4>
+                  <p className="as-service-sum">{sp.summary}</p>
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -414,7 +464,7 @@ function Footer() {
       <div className="as-wrap">
         <div className="as-foot-top">
           <Wordmark logo={LOGO} height={78} name="#FFFDFA" sub={GOLD[300]} />
-          <p>Every message we send names only &ldquo;Ghattas Clinic&rdquo; and a time.</p>
+          <p>{PLAN.closing[0]}<br />{PLAN.closing[1]}</p>
         </div>
         <div className="as-foot-grid">
           <div><Label tone="light">Visit</Label><p>{BRAND.area}</p><p className="as-dim">{BRAND.hoursNote}</p></div>

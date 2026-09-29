@@ -12,22 +12,29 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight, CalendarCheck, Menu, MessageCircle, X } from "lucide-react";
+import { ArrowRight, CalendarCheck, Menu, MessageCircle, X } from "lucide-react";
 
 import { Lockup, Mark, Wordmark } from "@/brand/Logo";
 import {
-  ARTICLES, BOOK, BRAND, EXPERIENCE, JOURNEY, NAV, PASSAGE, QUICK, RECORD, REVIEWS, SERVICES, SIGNATURE, STATS,
+  ARTICLES, BOOK, BRAND, CORE_SERVICES, EXPERIENCE, GROUPS, JOURNEY, NAV, PASSAGE, PLAN, RECORD, REVIEWS,
+  SIGNATURE, SPECIALTIES, STATS, type Group,
 } from "@/content";
 import { CountUp, LivePlayer, Reveal, RevealGroup, RevealItem, RuleDraw, SplitText, scrollToId } from "@/lib/motion";
 import { useHeader } from "@/lib/useHeader";
 import { GLOBE, GlobeHero } from "@/remotion/GlobeHero";
 import { ROUTE, RouteMap, type RouteTheme } from "@/remotion/RouteMap";
+import { GLYPH, ServiceGlyph, type GlyphTheme } from "@/remotion/ServiceGlyph";
 import { GOLD, NAVY } from "@/brand/tokens";
 import portrait from "@/media/dr-portrait.webp";
 import "./nocturne.css";
 
 const LOGO = "globeSans" as const;
-const TREATS = ["Erectile function", "Male fertility", "Testosterone", "Prostate & urology"];
+const TREATS = ["Urology", "Andrology", "Sexual health", "Fertility"];
+
+const GLYPH_THEME: GlyphTheme = {
+  line: "rgba(234,201,152,0.78)", accent: GOLD[200], dim: "rgba(234,201,152,0.16)",
+  text: "rgba(255,253,250,0.55)", ink: NAVY[850], font: "Manrope, sans-serif", logo: "globeSans", tight: true,
+};
 
 const ROUTE_THEME: RouteTheme = {
   line: "rgba(234,201,152,0.26)", pulse: GOLD[100], city: GOLD.logo, label: "#FFFDFA",
@@ -40,7 +47,7 @@ export function Nocturne() {
       <Header />
       <main>
         <Hero />
-        <Quick />
+        <Services />
         <Treat />
         <Care />
         <Visit />
@@ -65,7 +72,7 @@ function Header() {
     <header className={`nx-head${scrolled ? " is-solid" : ""}`}>
       <div className="nx-wrap nx-head-in">
         <button className="nx-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Ghattas Clinic, back to top">
-          <Lockup logo={LOGO} height={38} mark="brushed" name="#FFFDFA" sub={GOLD.logo} />
+          <Lockup logo={LOGO} height={50} mark="brushed" name="#FFFDFA" sub={GOLD.logo} />
         </button>
         <nav className="nx-links" aria-label="Sections">
           {NAV.map((n) => <button key={n.target} onClick={() => go(n.target)}>{n.label}</button>)}
@@ -119,13 +126,12 @@ function Hero() {
           <motion.p className="nx-kicker" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
             <span className="nx-live" aria-hidden />By appointment only · {BRAND.area.split(",")[0]}
           </motion.p>
-          <SplitText as="h1" onMount delay={0.15} text={BOOK.tagline} accent={["expertise"]} className="nx-h1" />
+          <SplitText as="h1" onMount delay={0.15} text={PLAN.slogan} accent={["Perspective"]} className="nx-h1" />
           <Reveal delay={0.5} className="nx-hero-lead">
             <RuleDraw className="nx-rule-short" delay={0.7} />
             <p>
-              The private practice of {BRAND.doctor}, founder of {BRAND.institution}, with more than {BRAND.years} years
-              of clinical experience. One patient at a time, a private entrance, and the consultant himself from the first
-              visit to the last.
+              {PLAN.bioShort} Led by {BRAND.doctor}, {BRAND.title.toLowerCase()} and founder of {BRAND.institution},
+              with more than {BRAND.years} years of clinical experience.
             </p>
           </Reveal>
           <Reveal delay={0.62} className="nx-hero-cta">
@@ -165,72 +171,113 @@ function Hero() {
   );
 }
 
-/* ── Quick routes ─────────────────────────────────────────── */
+/* ── Your health, your journey ───────────────────────────── */
 
-function Quick() {
+function Services() {
   return (
-    <section className="nx-quick" id="quick" aria-label="Quick routes">
-      <RevealGroup className="nx-wrap nx-quick-row" each={0.07}>
-        {QUICK.map((q) => (
-          <RevealItem key={q.id}>
-            <button className="nx-quick-item" onClick={() => scrollToId(q.target)}>
-              <span className="nx-quick-t">{q.title}</span>
-              <span className="nx-quick-s">{q.text}</span>
-              <ArrowUpRight size={18} className="nx-quick-a" />
-            </button>
-          </RevealItem>
-        ))}
-      </RevealGroup>
+    <section className="nx-sec nx-services" id="services">
+      <div className="nx-wrap">
+        <div className="nx-sec-head">
+          <Chapter n="01" a="Your" b="journey" />
+          <div>
+            <SplitText text="Your Health, Your Journey." className="nx-h2" accent={["Journey"]} />
+            <Reveal delay={0.1}>
+              <p className="nx-lead">
+                A complete healthcare experience designed around the modern man: the four core services patients
+                engage with first.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+        <RevealGroup className="nx-svcs" each={0.1}>
+          {CORE_SERVICES.map((sv, i) => (
+            <RevealItem as="article" key={sv.id} className="nx-svc">
+              <div className="nx-svc-art">
+                <LivePlayer
+                  component={ServiceGlyph} inputProps={{ ...GLYPH_THEME, kind: sv.id }}
+                  width={GLYPH.width} height={GLYPH.height} frames={GLYPH.frames} still={40}
+                  label={`${sv.name}: ${sv.line}`}
+                />
+              </div>
+              <div className="nx-svc-body">
+                <p className="nx-svc-k"><span className="u-tnum">{String(i + 1).padStart(2, "0")}</span>{sv.kicker}</p>
+                <h3>{sv.name}</h3>
+                <p className="nx-svc-line">{sv.line}</p>
+                <p className="nx-svc-text">{sv.body}</p>
+              </div>
+              <div className="nx-svc-side">
+                <ul className="nx-svc-points">{sv.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
+                <button className="nx-svc-cta" onClick={() => scrollToId(sv.target)}>
+                  {sv.cta} <ArrowRight size={16} />
+                </button>
+              </div>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
     </section>
   );
 }
 
-/* ── What we treat ────────────────────────────────────────── */
+/* ── Men's Health & Beyond ────────────────────────────────── */
+
+const GROUP_ORDER: Group[] = ["core", "beyond"];
 
 function Treat() {
   const [active, setActive] = useState(0);
-  const s = SERVICES[active];
+  const s = SPECIALTIES[active];
+  const g = GROUPS[s.group];
   return (
     <section className="nx-sec" id="treat">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="01" a="What we" b="treat" />
-          <SplitText text="Six services. One consultant reading all of it." className="nx-h2" accent={["One"]} />
+          <Chapter n="02" a="Men's health" b="& beyond" />
+          <div>
+            <SplitText text="Complete care for the modern man." className="nx-h2" accent={["modern", "man."]} />
+            <Reveal delay={0.1}>
+              <p className="nx-lead">
+                Urology, andrology, sexual health and fertility with {BRAND.doctorShort}, plus complementary specialties
+                under the same private roof.
+              </p>
+            </Reveal>
+          </div>
         </div>
         <div className="nx-treat">
-          <ol className="nx-treat-list">
-            {SERVICES.map((sv, i) => (
-              <li key={sv.id}>
-                <button
-                  className={`nx-treat-row${i === active ? " is-on" : ""}`}
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  onClick={() => setActive(i)}
-                  aria-expanded={i === active}
-                >
-                  <span className="nx-treat-n u-tnum">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="nx-treat-name">{sv.name}</span>
-                  <span className="nx-treat-min u-tnum">{sv.minutes} min</span>
-                </button>
-                {/* Mobile: the detail opens inline under its own row. */}
-                {i === active && (
-                  <div className="nx-treat-inline">
-                    <p>{sv.summary}</p>
-                    <p className="nx-muted">{sv.detail}</p>
-                  </div>
-                )}
-              </li>
+          <div className="nx-treat-list">
+            {GROUP_ORDER.map((gk) => (
+              <div key={gk} className="nx-treat-group">
+                <p className="nx-treat-gh">{GROUPS[gk].title}<span>{GROUPS[gk].note}</span></p>
+                <ol>
+                  {SPECIALTIES.map((sv, i) => sv.group !== gk ? null : (
+                    <li key={sv.id}>
+                      <button
+                        className={`nx-treat-row${i === active ? " is-on" : ""}`}
+                        onMouseEnter={() => setActive(i)}
+                        onFocus={() => setActive(i)}
+                        onClick={() => setActive(i)}
+                        aria-expanded={i === active}
+                      >
+                        <span className="nx-treat-n u-tnum">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="nx-treat-name">{sv.name}</span>
+                        <span className="nx-treat-min">{GROUPS[sv.group].by}</span>
+                      </button>
+                      {/* Mobile: the detail opens inline under its own row. */}
+                      {i === active && <div className="nx-treat-inline"><p>{sv.summary}</p></div>}
+                    </li>
+                  ))}
+                </ol>
+              </div>
             ))}
-          </ol>
+          </div>
           <aside className="nx-treat-card" aria-live="polite">
             <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <Mark logo={LOGO} height={46} fill="brushed" />
               <h3>{s.name}</h3>
               <p className="nx-treat-sum">{s.summary}</p>
-              <p className="nx-muted">{s.detail}</p>
+              <p className="nx-muted">{g.note}</p>
               <dl className="nx-treat-meta">
-                <div><dt>Visit length</dt><dd className="u-tnum">{s.minutes} minutes</dd></div>
-                <div><dt>Seen by</dt><dd>{BRAND.doctor}</dd></div>
+                <div><dt>Group</dt><dd>{g.title}</dd></div>
+                <div><dt>Seen by</dt><dd>{s.group === "core" ? BRAND.doctor : g.by}</dd></div>
               </dl>
               <button className="nx-btn nx-btn-gold" onClick={() => scrollToId("doors")}>
                 Book {s.short.toLowerCase()} <ArrowRight size={16} />
@@ -250,7 +297,7 @@ function Care() {
     <section className="nx-sec nx-care" id="care">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="02" a="Signature" b="Care" />
+          <Chapter n="03" a="Signature" b="Care" />
           <div>
             <SplitText text={SIGNATURE.intro} className="nx-h2" accent={["Signature", "Care"]} />
             <Reveal delay={0.1}><p className="nx-lead">{SIGNATURE.meaning}</p></Reveal>
@@ -284,7 +331,7 @@ function Visit() {
     <section className="nx-sec nx-visit" id="visit">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="03" a="The" b="visit" />
+          <Chapter n="04" a="The" b="visit" />
           <SplitText text="A visit, start to finish." className="nx-h2" accent={["finish."]} />
         </div>
         <div className="nx-steps">
@@ -340,10 +387,10 @@ function Doctor() {
           {/* The mid-thigh crop lives inside this frame, where the frame is
               visibly doing the cutting. */}
           <img src={portrait} alt="Dr. Osama Ghattas" loading="lazy" />
-          <span className="nx-doc-cap">{BRAND.doctor}<br /><em>Founder, {BRAND.institution}</em></span>
+          <span className="nx-doc-cap">{BRAND.doctor}<br /><em>{BRAND.title}</em></span>
         </Reveal>
         <div className="nx-doc-copy">
-          <Chapter n="04" a="Your" b="consultant" />
+          <Chapter n="05" a="Your" b="consultant" />
           <SplitText text="One doctor, from the first visit to the last." className="nx-h2" accent={["One", "doctor,"]} />
           <Reveal delay={0.1}>
             <p className="nx-lead">{BOOK.positioning}</p>
@@ -370,7 +417,7 @@ function Passage() {
     <section className="nx-sec nx-passage" id="passage">
       <div className="nx-wrap nx-passage-grid">
         <div>
-          <Chapter n="05" a="From" b="abroad" />
+          <Chapter n="06" a="From" b="abroad" />
           <SplitText text={PASSAGE.name} className="nx-h2" accent={["Passage"]} />
           <Reveal delay={0.1}><p className="nx-lead">{PASSAGE.lead}</p></Reveal>
           <RevealGroup as="ol" className="nx-passage-steps" each={0.08}>
@@ -402,7 +449,7 @@ function Voices() {
     <section className="nx-sec nx-voices" id="voices">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="06" a="In their" b="words" />
+          <Chapter n="07" a="In their" b="words" />
           <SplitText text="What men say afterwards." className="nx-h2" accent={["afterwards."]} />
         </div>
         <RevealGroup className="nx-quotes" each={0.1}>
@@ -427,7 +474,7 @@ function Journal() {
     <section className="nx-sec" id="journal">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="07" a="The" b="journal" />
+          <Chapter n="08" a="The" b="journal" />
           <SplitText text="Written by the clinic, not by an agency." className="nx-h2" accent={["clinic,"]} />
         </div>
         <RevealGroup as="ul" className="nx-articles" each={0.08}>
@@ -478,7 +525,7 @@ function Footer() {
       <div className="nx-wrap">
         <div className="nx-foot-top">
           <Wordmark logo={LOGO} height={72} name="#FFFDFA" sub={GOLD.logo} />
-          <p className="nx-foot-promise">Every message we send names only &ldquo;Ghattas Clinic&rdquo; and a time.</p>
+          <p className="nx-foot-promise">{PLAN.closing[0]}<br />{PLAN.closing[1]}</p>
         </div>
         <div className="nx-foot-grid">
           <div><span className="nx-label">Visit</span><p>{BRAND.area}</p><p className="nx-muted">{BRAND.hoursNote}</p></div>

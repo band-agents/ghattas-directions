@@ -14,18 +14,25 @@ import { ArrowRight, CalendarCheck, Menu, MessageCircle, X } from "lucide-react"
 
 import { Lockup, Mark, Wordmark } from "@/brand/Logo";
 import {
-  ARTICLES, BOOK, BRAND, EXPERIENCE, JOURNEY, NAV, PASSAGE, QUICK, RECORD, REVIEWS, SERVICES, SIGNATURE, STATS,
+  ARTICLES, BOOK, BRAND, CORE_SERVICES, EXPERIENCE, GROUPS, JOURNEY, NAV, PASSAGE, PLAN, RECORD, REVIEWS,
+  SIGNATURE, SPECIALTIES, STATS, type Group,
 } from "@/content";
 import { CountUp, LivePlayer, Reveal, RevealGroup, RevealItem, RuleDraw, SplitText, scrollToId } from "@/lib/motion";
 import { useHeader } from "@/lib/useHeader";
 import { MEDALLION, PorcelainHero } from "@/remotion/PorcelainHero";
 import { ROUTE, RouteMap, type RouteTheme } from "@/remotion/RouteMap";
+import { GLYPH, ServiceGlyph, type GlyphTheme } from "@/remotion/ServiceGlyph";
 import { GOLD, NAVY } from "@/brand/tokens";
 import portrait from "@/media/dr-portrait.webp";
 import "./porcelain.css";
 
 const LOGO = "globeSerif" as const;
 const ROMAN = ["I", "II", "III", "IV"];
+
+const GLYPH_THEME: GlyphTheme = {
+  line: NAVY[850], accent: GOLD[400], dim: "rgba(17,24,38,0.12)", text: NAVY[600], ink: "#FFFDFA",
+  font: "'Hanken Grotesk', sans-serif", logo: "globeSerif",
+};
 
 const ROUTE_THEME: RouteTheme = {
   line: "rgba(17,24,38,0.2)", pulse: GOLD[500], city: NAVY[850], label: NAVY[850],
@@ -34,7 +41,7 @@ const ROUTE_THEME: RouteTheme = {
 
 /** Section order doubles as the folio: the page number printed on each head. */
 const FOLIO: Record<string, string> = {
-  quick: "02", treat: "03", care: "04", visit: "05", numbers: "06", doctor: "07",
+  services: "02", treat: "03", care: "04", visit: "05", numbers: "06", doctor: "07",
   passage: "08", voices: "09", journal: "10", doors: "11",
 };
 
@@ -44,7 +51,7 @@ export function Porcelain() {
       <Header />
       <main>
         <Hero />
-        <Contents />
+        <Services />
         <Treat />
         <Care />
         <Visit />
@@ -79,7 +86,7 @@ function Header() {
     <header className={`pc-head${scrolled ? " is-solid" : ""}`}>
       <div className="pc-wrap pc-head-in">
         <button className="pc-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Ghattas Clinic, back to top">
-          <Lockup logo={LOGO} height={40} mark="brushed" name={NAVY[850]} sub={GOLD.ink} />
+          <Lockup logo={LOGO} height={52} mark="brushed" name={NAVY[850]} sub={GOLD.ink} />
         </button>
         <nav className="pc-links" aria-label="Sections">
           {NAV.map((n) => <button key={n.target} onClick={() => go(n.target)}>{n.label}</button>)}
@@ -108,13 +115,13 @@ function Header() {
 /* ── Hero ─────────────────────────────────────────────────── */
 
 function Hero() {
-  const lead = `The private practice of ${BRAND.doctor}, founder of ${BRAND.institution}, with more than ${BRAND.years} years of clinical experience. One patient at a time, a private entrance, and the consultant himself from the first visit to the last.`;
+  const lead = `${PLAN.bioShort} Led by ${BRAND.doctor}, ${BRAND.title.toLowerCase()} and founder of ${BRAND.institution}, with more than ${BRAND.years} years of clinical experience.`;
   return (
     <section className="pc-hero" id="hero">
       <div className="pc-wrap pc-hero-grid">
         <div className="pc-hero-copy">
           <Reveal y={10}><p className="pc-kicker">By appointment only · {BRAND.area.split(",")[0]}</p></Reveal>
-          <SplitText as="h1" onMount delay={0.1} each={0.06} text={BOOK.tagline} accent={["expertise"]} className="pc-h1" />
+          <SplitText as="h1" onMount delay={0.1} each={0.06} text={PLAN.slogan} accent={["Perspective"]} className="pc-h1" />
           <Reveal delay={0.45} y={14}>
             <p className="pc-lead pc-dropcap">{lead}</p>
           </Reveal>
@@ -149,52 +156,81 @@ function Hero() {
   );
 }
 
-/* ── Contents (quick routes) ──────────────────────────────── */
+/* ── Your health, your journey ───────────────────────────── */
 
-function Contents() {
+function Services() {
   return (
-    <section className="pc-sec pc-contents" id="quick">
+    <section className="pc-sec pc-svcs-sec" id="services">
       <div className="pc-wrap">
-        <RunningHead id="quick" title="Contents" />
-        <div className="pc-toc-grid">
-          <Reveal><h2 className="pc-h2">Where to begin.</h2></Reveal>
-          <RevealGroup as="ol" className="pc-toc" each={0.07}>
-            {QUICK.map((q) => (
-              <RevealItem as="li" key={q.id}>
-                <button onClick={() => scrollToId(q.target)}>
-                  <span className="pc-toc-t">{q.title}</span>
-                  <span className="pc-toc-lead" aria-hidden />
-                  <span className="pc-toc-p"><i>p.</i> <span className="u-tnum">{FOLIO[q.target]}</span></span>
-                  <span className="pc-toc-s">{q.text}</span>
-                </button>
-              </RevealItem>
-            ))}
-          </RevealGroup>
+        <RunningHead id="services" title="Your health, your journey" />
+        <div className="pc-svcs-head">
+          <SplitText text="Your Health, Your Journey." className="pc-h2" accent={["Journey."]} />
+          <Reveal delay={0.1}>
+            <p className="pc-lead">
+              A complete healthcare experience designed around the modern man: the four core services patients
+              engage with first.
+            </p>
+          </Reveal>
         </div>
+        <RevealGroup className="pc-svcs" each={0.1}>
+          {CORE_SERVICES.map((sv, i) => (
+            <RevealItem as="article" key={sv.id} className="pc-svc">
+              <div className="pc-svc-top">
+                <div className="pc-svc-art">
+                  <LivePlayer
+                    component={ServiceGlyph} inputProps={{ ...GLYPH_THEME, kind: sv.id }}
+                    width={GLYPH.width} height={GLYPH.height} frames={GLYPH.frames} still={40}
+                    label={`${sv.name}: ${sv.line}`}
+                  />
+                </div>
+                <div>
+                  <span className="pc-svc-n u-tnum">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="pc-kicker">{sv.kicker}</p>
+                </div>
+              </div>
+              <h3>{sv.name}</h3>
+              <p className="pc-svc-line">{sv.line}</p>
+              <p className="pc-svc-text">{sv.body}</p>
+              <ul className="pc-svc-points">{sv.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
+              <button className="pc-textlink" onClick={() => scrollToId(sv.target)}>
+                {sv.cta} <span className="pc-svc-folio"><i>p.</i> {FOLIO[sv.target]}</span>
+              </button>
+            </RevealItem>
+          ))}
+        </RevealGroup>
       </div>
     </section>
   );
 }
 
-/* ── What we treat ────────────────────────────────────────── */
+/* ── Men's Health & Beyond ────────────────────────────────── */
+
+const GROUP_ORDER: Group[] = ["core", "beyond"];
 
 function Treat() {
   return (
     <section className="pc-sec" id="treat">
       <div className="pc-wrap">
-        <RunningHead id="treat" title="What we treat" />
-        <SplitText text="Six services. One consultant reading all of it." className="pc-h2 pc-h2-wide" accent={["One", "consultant"]} />
-        <RevealGroup className="pc-services" each={0.07}>
-          {SERVICES.map((s) => (
-            <RevealItem as="article" key={s.id} className="pc-service">
-              <p className="pc-service-meta u-tnum">{s.minutes} min · with {BRAND.doctorShort}</p>
-              <h3>{s.name}</h3>
-              <p className="pc-service-sum">{s.summary}</p>
-              <p className="pc-service-det">{s.detail}</p>
-              <button className="pc-textlink" onClick={() => scrollToId("doors")}>Book this visit <ArrowRight size={15} /></button>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        <RunningHead id="treat" title="Men's health & beyond" />
+        <SplitText text="Complete care for the modern man." className="pc-h2 pc-h2-wide" accent={["modern", "man."]} />
+        {GROUP_ORDER.map((gk) => (
+          <div key={gk} className="pc-group">
+            <Reveal className="pc-group-head">
+              <h3>{GROUPS[gk].title}</h3>
+              <p>{GROUPS[gk].note}</p>
+            </Reveal>
+            <RevealGroup className="pc-services" each={0.06}>
+              {SPECIALTIES.filter((sp) => sp.group === gk).map((sp) => (
+                <RevealItem as="article" key={sp.id} className="pc-service">
+                  <p className="pc-service-meta">{gk === "core" ? BRAND.doctorShort : GROUPS[gk].by}</p>
+                  <h4>{sp.name}</h4>
+                  <p className="pc-service-sum">{sp.summary}</p>
+                  <button className="pc-textlink" onClick={() => scrollToId("doors")}>Book <ArrowRight size={15} /></button>
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -304,7 +340,7 @@ function Doctor() {
           <Reveal delay={0.1} className="pc-doc-arch">
             {/* Mid-thigh crop, inside an arch that visibly does the cutting. */}
             <img src={portrait} alt="Dr. Osama Ghattas" loading="lazy" />
-            <span className="pc-doc-cap">{BRAND.doctor} · Founder, {BRAND.institution}</span>
+            <span className="pc-doc-cap">{BRAND.doctor} · {BRAND.title}</span>
           </Reveal>
         </div>
       </div>
@@ -432,7 +468,7 @@ function Footer() {
           <Mark logo={LOGO} height={64} fill="brushed" />
           <Wordmark logo={LOGO} height={84} name={NAVY[850]} sub={GOLD.ink} />
         </div>
-        <p className="pc-foot-promise">Every message we send names only &ldquo;Ghattas Clinic&rdquo; and a time.</p>
+        <p className="pc-foot-promise">{PLAN.closing[0]}<br />{PLAN.closing[1]}</p>
         <div className="pc-foot-grid">
           <div><p className="pc-kicker">Visit</p><p>{BRAND.area}</p><p className="pc-dim">{BRAND.hoursNote}</p></div>
           <div><p className="pc-kicker">Hours</p><p>{BRAND.hours}</p></div>

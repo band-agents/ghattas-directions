@@ -1,9 +1,13 @@
 /**
  * Every word the three directions print, in one place.
  *
- * Two sources, kept apart on purpose:
+ * Three sources, kept apart on purpose:
  *   BOOK — lifted from the Ghattas Clinic brand book (ADMEDICA, 2026). This is
  *          the client's own language and can be used as written.
+ *   PLAN, CORE_SERVICES, SPECIALTIES — from the client's marketing launch plan
+ *          (Downloads/Ghattas_Clinic_Marketing_Plan final.pdf, 2026-09), including
+ *          its website mockup on page 8. Also the client's words, except where a
+ *          line is marked "ours".
  *   the rest — carried over from the Elite Clinic build and still PLACEHOLDER:
  *          services, durations, the visit, reviews, articles, contact details
  *          and every procedure count. None of it has been verified.
@@ -20,6 +24,7 @@ export const BRAND = {
   line: "For Men's Health",
   doctor: "Dr. Osama Ghattas",
   doctorShort: "Dr. Ghattas",
+  title: "Consultant Urologist & Andrologist",
   institution: "Dar El Zokora",
   years: 22,
   /* Contact: placeholders until the clinic confirms. */
@@ -54,9 +59,96 @@ export const BOOK = {
     "Patients who prefer faster and more flexible care",
     "International patients seeking a fully coordinated experience",
   ],
-  values: ["Expertise", "Access", "Privacy"] as const,
+  /* The plan added Technology to the book's three. */
+  values: ["Expertise", "Access", "Privacy", "Technology"] as const,
   valuesLine: "Delivered through Signature Care",
 } as const;
+
+/* ── Marketing plan ───────────────────────────────────────── */
+
+export const PLAN = {
+  /* "Men's Health" is the category, "A New Perspective" the positioning,
+     "A private world" the experience: the plan's own hierarchy. */
+  slogan: "A New Perspective on Men's Health.",
+  bioShort:
+    "A private Men's Health destination bringing together expertise, discretion, technology and personalized care, all in one elevated healthcare experience.",
+  bioFull:
+    "Designed exclusively around men, Ghattas Clinic brings together medical expertise, discretion, technology and personalized care in one private healthcare experience. From your first appointment to every step of your journey, we are committed to making Men's Health more personal, seamless and accessible.",
+  closing: ["More than a clinic.", "A private world of Men's Health."],
+} as const;
+
+/**
+ * The four core services, "the four services patients engage with first".
+ * `line` and `body` are the plan's services page; `points` gather what the
+ * plan says elsewhere about the same service: its website mockup, the booking
+ * engine and WhatsApp CRM, the tourism partners, the growth services.
+ */
+export const CORE_SERVICES = [
+  {
+    id: "appointment",
+    name: "Take an Appointment",
+    kicker: "Online booking",
+    line: "Your time matters.",
+    body: "Book your consultation online, choose your date and time, pay securely, and receive instant confirmation.",
+    points: [
+      "Your own date and time",
+      "Secure online payment",
+      "Instant confirmation",
+      "WhatsApp reminders and follow-up",
+      "Arabic and English",
+    ],
+    cta: "Book Your Appointment",
+    target: "doors",
+  },
+  {
+    id: "private",
+    name: "Own the Clinic",
+    kicker: "Private reservation",
+    line: "Your privacy comes first.",
+    body: "A private clinic journey built around comfort and confidentiality, with dedicated spaces and appointment-based access.",
+    points: [
+      "A dedicated waiting area",
+      "No shared spaces",
+      "No waiting time",
+      "Appointment-based access",
+      "Discreet records and follow-up",
+    ],
+    cta: "Discover Private Care",
+    target: "care",
+  },
+  {
+    id: "abroad",
+    name: "Come From Abroad",
+    kicker: "International patients",
+    line: "From your flight to your follow-up.",
+    body: "A complete medical journey for international patients: travel support, accommodation, treatment and follow-up.",
+    points: [
+      "Flights, hotel and treatment in one package",
+      "A dedicated concierge contact",
+      "Airport pickup and accommodation",
+      "Follow-up once you are home",
+      "For you and your family, from the GCC and beyond",
+    ],
+    cta: "Plan Your Medical Journey",
+    target: "passage",
+  },
+  {
+    id: "beyond",
+    name: "Men's Health & Beyond",
+    kicker: "Multidisciplinary care",
+    line: "Complete care for the modern man.",
+    body: "Urology, andrology, sexual health and fertility, plus complementary services like men's aesthetics & plastic surgery.",
+    points: [
+      "Urology and andrology",
+      "Sexual health and fertility",
+      "Men's aesthetics & plastic surgery",
+      "Skin, hair and hormonal health",
+      "Personalized wellness programmes",
+    ],
+    cta: "Explore Our Services",
+    target: "treat",
+  },
+] as const;
 
 /** The five parts of the clinic experience, in the book's order. */
 export const EXPERIENCE = [
@@ -92,63 +184,41 @@ export const PERSONALITY = [
 
 /* ── Site content (PLACEHOLDER) ───────────────────────────── */
 
-export const QUICK = [
-  { id: "book", title: "Book a visit", text: "Six services, real slots", target: "doors" },
-  { id: "treat", title: "What we treat", text: "Andrology to hormonal health", target: "treat" },
-  { id: "doctor", title: "Your consultant", text: "The same doctor, every visit", target: "doctor" },
-  { id: "portal", title: "Patient portal", text: "Results, scans, prescriptions", target: "doors" },
-] as const;
+export type Group = "core" | "beyond";
 
-export const SERVICES = [
-  {
-    id: "consultation",
-    name: "Men's Health Consultation",
-    short: "Consultation",
-    summary: "A full private consultation with Dr. Osama Ghattas.",
-    detail: "History, examination where needed, and a written plan before you leave. Any tests are arranged the same visit.",
-    minutes: 40,
+/**
+ * Men's Health & Beyond, as the plan lists it: the core specialties Dr. Ghattas
+ * treats himself, then the complementary specialties hosted on site or reached
+ * through the clinic's network. Summaries are the plan's where it gives one;
+ * the rest are ours and marked.
+ */
+export const GROUPS: Record<Group, { title: string; note: string; by: string }> = {
+  core: {
+    title: "Core specialties",
+    note: "Dr. Ghattas' direct clinical foundation, and the reason patients seek out the clinic.",
+    by: "Dr. Ghattas",
   },
-  {
-    id: "andrology",
-    name: "Andrology",
-    short: "Andrology",
-    summary: "Erectile function, performance and male sexual health.",
-    detail: "Most cases have a treatable physical cause that a basic workup finds quickly: vascular, hormonal or medication-related.",
-    minutes: 45,
+  beyond: {
+    title: "New & complementary",
+    note: "Complementary specialties within one trusted, private setting, from visiting specialists and the clinic's referral network.",
+    by: "Visiting specialist",
   },
-  {
-    id: "fertility",
-    name: "Male Fertility",
-    short: "Fertility",
-    summary: "Semen analysis, varicocele assessment and fertility planning.",
-    detail: "A full male workup takes one visit and one lab run, and it changes the couple's plan more often than people expect.",
-    minutes: 45,
-  },
-  {
-    id: "hormones",
-    name: "Hormone & Testosterone",
-    short: "Hormones",
-    summary: "Low testosterone, energy, mood and metabolic health.",
-    detail: "Morning samples, repeated to confirm. Treatment starts only when the numbers and the symptoms agree.",
-    minutes: 35,
-  },
-  {
-    id: "urology",
-    name: "General Urology",
-    short: "Urology",
-    summary: "Prostate, urinary symptoms, stones and infections.",
-    detail: "Ultrasound and laboratory on site, so an investigation that usually spans three appointments takes one.",
-    minutes: 40,
-  },
-  {
-    id: "screening",
-    name: "Executive Health Screening",
-    short: "Screening",
-    summary: "A complete men's check-up in a single half-day.",
-    detail: "Cardiovascular, metabolic, hormonal, prostate and urological, read together by one consultant.",
-    minutes: 180,
-  },
-] as const;
+};
+
+export const SPECIALTIES: { id: string; name: string; short: string; group: Group; summary: string }[] = [
+  { id: "andrology", name: "Andrology", short: "Andrology", group: "core", summary: "Erectile function, performance and male sexual health." /* ours */ },
+  { id: "sexual", name: "Sexual Health", short: "Sexual health", group: "core", summary: "Confidential assessment and treatment of sexual function and wellbeing." /* ours */ },
+  { id: "urology", name: "Urology", short: "Urology", group: "core", summary: "Prostate, urinary symptoms, stones and infections." /* ours */ },
+  { id: "fertility", name: "Male Fertility", short: "Fertility", group: "core", summary: "Semen analysis, varicocele assessment and fertility planning." /* ours */ },
+  { id: "aesthetics", name: "Men's Aesthetics & Plastic Surgery", short: "Aesthetics", group: "beyond", summary: "Partner surgeons hosted on site for consultations and procedures." },
+  { id: "skin", name: "Dermatology & Skin Health", short: "Skin health", group: "beyond", summary: "Male-focused skin, hair and grooming treatments." },
+  { id: "hair", name: "Hair Transplant", short: "Hair", group: "beyond", summary: "Transplant and regrowth referrals through the clinic network." },
+  { id: "nutrition", name: "Nutrition & Hormonal Health", short: "Nutrition", group: "beyond", summary: "Wellness and performance-focused specialist add-ons." },
+  { id: "endocrinology", name: "Endocrinology", short: "Endocrinology", group: "beyond", summary: "Hormonal and metabolic care from visiting specialists." /* ours */ },
+  { id: "pain", name: "Pain Management", short: "Pain", group: "beyond", summary: "Specialist care for chronic and persistent pain." /* ours */ },
+  { id: "psychotherapy", name: "Psychotherapy", short: "Psychotherapy", group: "beyond", summary: "Confidential support for the mind as well as the body." /* ours */ },
+  { id: "pediatric", name: "Pediatric Surgery", short: "Pediatric", group: "beyond", summary: "Surgical care for children, through the same private route." /* ours */ },
+];
 
 export const JOURNEY = [
   { title: "Book in a minute", body: "Choose what you need, a day and a time. No phone queue and nothing to explain to a receptionist." },
@@ -174,13 +244,14 @@ export const RECORD = [
 export const PASSAGE = {
   name: "Ghattas Passage",
   kicker: "Coming from abroad",
+  /* Plan: services page, website mockup, and the medical-tourism partners page. */
   lead:
-    "One coordinated journey for international patients: your reports reviewed before you fly, a travel letter and flights around the treatment dates, a car at arrivals, a hotel near the clinic, and the clinical work scheduled on consecutive days.",
+    "A complete medical journey for international patients: travel support, accommodation, treatment and follow-up. From flight tickets to medical support, everything is handled for you and your family.",
   steps: [
     { title: "Reviewed before you fly", body: "Send your reports. Get a plan, a day count and a fixed quote." },
-    { title: "Travel letter and flights", body: "Booked around the treatment dates, not the other way round." },
-    { title: "Met at arrivals", body: "Cairo International, then a car for every visit." },
-    { title: "Days, not weeks", body: "Everything scheduled back to back." },
+    { title: "One package", body: "Flights, hotel stay and treatment bundled for GCC and international patients." },
+    { title: "A dedicated concierge", body: "One contact for airport pickup, accommodation and appointments." },
+    { title: "Follow-up from home", body: "Your care continues after you fly back." },
   ],
 } as const;
 
@@ -242,7 +313,7 @@ export const ARTICLES = [
 ] as const;
 
 export const NAV = [
-  { label: "Treatments", target: "treat" },
+  { label: "Services", target: "services" },
   { label: "Signature Care", target: "care" },
   { label: "Dr. Ghattas", target: "doctor" },
   { label: "International", target: "passage" },
@@ -256,8 +327,8 @@ export const NAV = [
  */
 export const HIERARCHY = [
   { id: "hero", name: "Hero", job: "Say what this is and who runs it, with the booking button in reach." },
-  { id: "quick", name: "Quick routes", job: "Four doors for the four things most visitors came to do." },
-  { id: "treat", name: "What we treat", job: "Answer 'is this for my problem?' before anything else." },
+  { id: "services", name: "Your Health, Your Journey", job: "The four core services patients engage with first." },
+  { id: "treat", name: "Men's Health & Beyond", job: "Core specialties with Dr. Ghattas, then the complementary ones." },
   { id: "care", name: "Signature Care", job: "Why here: the five pillars from the brand book." },
   { id: "visit", name: "The visit", job: "What happens, in order, so a first visit feels known." },
   { id: "numbers", name: "By the numbers", job: "Proof in four figures, each with its source." },

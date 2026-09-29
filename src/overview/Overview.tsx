@@ -70,9 +70,12 @@ const DIRECTIONS: Direction[] = [
 
 const CHANGES: [string, string, string][] = [
   ["Name", "Elite Clinic", "Ghattas Clinic, For Men's Health"],
+  ["Logo line", "CLINIC under the name", "FOR MEN'S HEALTH, as in the marketing plan's approved lockup"],
+  ["Slogan", "Our own headline", "A New Perspective on Men's Health"],
+  ["Services", "Six placeholder treatments", "The plan's four core services, then Men's Health & Beyond"],
   ["Logo", "A single-letter G drawn by us", "The book's three official marks, one per direction, taken as vectors from the PDF"],
   ["Colour", "Hospital navy with sand, coral and gold", "Only the book's three: Dark Navy, Luxury Brushed Gold, Porcelain"],
-  ["Words", "Our own positioning", "The book's language: tagline, positioning, Signature Care, tone of voice"],
+  ["Words", "Our own positioning", "The book and the plan: slogan, bio, Signature Care, tone of voice"],
   ["Type", "Fraunces with IBM Plex", "A new pairing per direction, each matched to its logo's letterforms"],
 ];
 
@@ -84,10 +87,11 @@ const KEPT = [
 ];
 
 /** How each direction treats each section. Same rows as HIERARCHY. */
-const TREATMENT: Record<string, [string, string, string]> = {
+/* Keyed by the hierarchy ids, so a renamed section fails the typecheck instead of the page. */
+const TREATMENT: Record<(typeof HIERARCHY)[number]["id"], [string, string, string]> = {
   hero: ["The globe G in gold line, turning, with Dr. Ghattas seated in front", "A navy medallion inside the G's ring, personality pairs changing beneath", "A brushed-gold panel cut at 45°, the arrow lifting, facts sliding in"],
-  quick: ["A hairline row of four", "A contents page with page numbers", "Cut-corner tiles that fill navy on hover"],
-  treat: ["An index list with a sticky detail card", "A ruled editorial grid, everything visible", "Six cards led by the length of the visit"],
+  services: ["Four framed panels, each with its line drawing in gold", "A ruled two-by-two spread, drawings in porcelain medallions, links carry page numbers", "Four cut-corner cards on a diagonal of navy and porcelain"],
+  treat: ["Grouped index list with a sticky detail card", "Two ruled grids: core specialties, then the complementary ones", "Two card grids, core in navy"],
   care: ["Five pillars under drawn rules, then a marquee of the values", "A drop-cap essay beside the five pillars", "Five pillars climbing as a staircase"],
   visit: ["Four stops on a gold timeline", "Roman numerals, I to IV", "Outlined 01 to 04 with arrows between"],
   numbers: ["The one brushed-gold band on the page", "Large Bodoni figures between column rules", "A brushed-gold band with wide numerals"],
@@ -100,7 +104,7 @@ const TREATMENT: Record<string, [string, string, string]> = {
 
 const ASKS = [
   ["Pick a direction", "Or a mix: any direction can wear any of the three logos."],
-  ["Pick a logo option", "The book leaves three open. Each direction shows one in use."],
+  ["Confirm the logo", "The plan recommends the globe G with FOR MEN'S HEALTH, which is direction A's. B and C show the alternatives in use."],
   ["Confirm the figures", "22+ years is from the book. The 20,000+ procedures figure still needs a source."],
   ["Send real details", "Address, phone, WhatsApp, email and hours are placeholders."],
   ["Clear the testimonials", "The three quotes are samples. We need consented words, initials only."],
@@ -120,7 +124,7 @@ export function Overview() {
       </main>
       <footer className="ov-foot">
         <div className="ov-wrap ov-foot-in">
-          <span>Website directions · Round 2</span>
+          <span>Website directions · Round 3</span>
           <span>Ghattas Clinic ® For Men&apos;s Health</span>
         </div>
       </footer>
@@ -138,7 +142,7 @@ function Cover() {
         <div className="ov-meta">
           <div><span>Project scope</span><b>Website revamp, three directions</b></div>
           <div><span>Client</span><b>Ghattas Clinic</b></div>
-          <div><span>Round</span><b>02 · September 2026</b></div>
+          <div><span>Round</span><b>03 · September 2026</b></div>
         </div>
         <div className="ov-cover-main">
           <Reveal y={16}><Wordmark logo="globeSans" height={92} name="#FFFDFA" sub={GOLD.logo} /></Reveal>
@@ -241,7 +245,7 @@ function Foundations() {
                 <div key={k} className="ov-logo">
                   <Mark logo={k} height={52} fill="brushed" />
                   <Wordmark logo={k} height={34} name="#FFFDFA" sub={GOLD.logo} />
-                  <span>Option 0{i + 1} · in direction {"ABC"[i]}</span>
+                  <span>Option 0{i + 1} · in direction {"ABC"[i]}{i === 0 ? " · recommended" : ""}</span>
                 </div>
               ))}
             </div>

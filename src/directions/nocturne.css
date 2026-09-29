@@ -127,29 +127,6 @@
   .nx-values-line { width: 100%; }
 }
 
-/* ── Quick ── */
-.nx-quick { background: var(--bg-deep); border-block: 1px solid var(--line-soft); }
-.nx-quick-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.nx-quick-row > div + div { border-left: 1px solid var(--line-soft); }
-.nx-quick-item { position: relative; display: grid; width: 100%; text-align: left; padding: 30px 28px 30px; gap: 6px; transition: background-color .4s; }
-.nx-quick-row > div:first-child .nx-quick-item { padding-left: 0; }
-.nx-quick-item:hover { background: rgba(234, 201, 152, .04); }
-.nx-quick-t { font: 400 26px/1.1 var(--display); }
-.nx-quick-s { font-size: 13.5px; color: var(--faint); }
-.nx-quick-a { position: absolute; right: 22px; top: 32px; color: var(--gold); opacity: .5; transition: transform .5s var(--ease), opacity .3s; }
-.nx-quick-item:hover .nx-quick-a { opacity: 1; transform: translate(3px, -3px); }
-@media (max-width: 900px) {
-  .nx-quick-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .nx-quick-row > div:nth-child(3) { border-left: 0; }
-  .nx-quick-row > div:nth-child(n+3) { border-top: 1px solid var(--line-soft); }
-  .nx-quick-row > div:nth-child(3) .nx-quick-item { padding-left: 0; }
-}
-@media (max-width: 520px) {
-  .nx-quick-row { grid-template-columns: minmax(0, 1fr); }
-  .nx-quick-row > div + div { border-left: 0; border-top: 1px solid var(--line-soft); }
-  .nx-quick-item { padding-left: 0; }
-}
-
 /* ── Sections ── */
 .nx-sec { position: relative; padding-block: clamp(84px, 11vw, 150px); }
 .nx-sec-head { display: grid; grid-template-columns: minmax(200px, 0.34fr) 1fr; gap: 28px 48px; align-items: start; margin-bottom: clamp(48px, 6vw, 80px); }
@@ -161,12 +138,15 @@
 
 /* What we treat */
 .nx-treat { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
-.nx-treat-list { border-top: 1px solid var(--line); }
+.nx-treat-group + .nx-treat-group { margin-top: 48px; }
+.nx-treat-gh { display: grid; gap: 6px; padding-bottom: 16px; font: 600 11.5px/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--gold); }
+.nx-treat-gh span { font: italic 400 17px/1.4 var(--display); letter-spacing: 0; text-transform: none; color: var(--faint); max-width: 52ch; }
+.nx-treat-list ol { border-top: 1px solid var(--line); }
 .nx-treat-list li { border-bottom: 1px solid var(--line); }
-.nx-treat-row { width: 100%; display: grid; grid-template-columns: 48px 1fr auto; align-items: baseline; gap: 16px; padding: 24px 0; text-align: left; transition: padding .5s var(--ease); }
+.nx-treat-row { width: 100%; display: grid; grid-template-columns: 48px 1fr auto; align-items: baseline; gap: 16px; padding: 18px 0; text-align: left; transition: padding .5s var(--ease); }
 .nx-treat-n { font: 500 12px/1 var(--sans); letter-spacing: .18em; color: var(--faint); }
-.nx-treat-name { font: 300 clamp(26px, 3vw, 40px)/1.1 var(--display); color: var(--muted); transition: color .35s; }
-.nx-treat-min { font-size: 13px; color: var(--faint); }
+.nx-treat-name { font: 300 clamp(24px, 2.4vw, 32px)/1.15 var(--display); color: var(--muted); transition: color .35s; }
+.nx-treat-min { font-size: 12.5px; color: var(--faint); white-space: nowrap; }
 .nx-treat-row:hover .nx-treat-name, .nx-treat-row.is-on .nx-treat-name { color: var(--text); }
 .nx-treat-row.is-on { padding-left: 14px; }
 .nx-treat-row.is-on .nx-treat-n { color: var(--gold); }
@@ -319,4 +299,42 @@
   .nx-values { flex-wrap: wrap; gap: 12px; }
   .nx-value { font-size: 15px; letter-spacing: .2em; gap: 10px; }
   .nx-kicker { letter-spacing: .2em; line-height: 1.5; }
+}
+
+/* ── Your health, your journey ── */
+.nx-services { background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 100%); border-top: 1px solid var(--line-soft); }
+.nx-svcs { display: grid; border-top: 1px solid var(--line); }
+.nx-svc {
+  display: grid; grid-template-columns: minmax(170px, 250px) minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(24px, 3.4vw, 56px); align-items: center;
+  padding-block: clamp(28px, 3vw, 40px); border-bottom: 1px solid var(--line);
+  transition: background-color .5s var(--ease);
+}
+.nx-svc:hover { background: linear-gradient(90deg, rgba(8, 39, 66, .5), transparent 80%); }
+.nx-svc-art { aspect-ratio: 1; border: 1px solid var(--line); background: radial-gradient(80% 80% at 50% 40%, rgba(4, 51, 86, .55), rgba(15, 20, 29, .1)); padding: 14px; }
+.nx-svc-body { display: flex; flex-direction: column; align-items: flex-start; }
+.nx-svc-k { display: flex; align-items: center; gap: 12px; font: 600 11px/1 var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--gold); }
+.nx-svc-k span { font: 300 30px/1 var(--display); letter-spacing: 0; color: var(--text); }
+.nx-svc h3 { margin-top: 16px; font: 400 clamp(32px, 3.2vw, 46px)/1.02 var(--display); }
+.nx-svc-line { margin-top: 6px; font: italic 400 22px/1.3 var(--display); color: var(--gold); }
+.nx-svc-text { margin-top: 14px; font-size: 15.5px; line-height: 1.75; color: var(--muted); max-width: 50ch; }
+.nx-svc-side { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.nx-svc-points { display: grid; gap: 9px; width: 100%; }
+.nx-svc-points li { display: flex; align-items: baseline; gap: 12px; font-size: 14px; color: var(--muted); }
+.nx-svc-points li::before { content: ""; flex: 0 0 14px; height: 1px; background: var(--gold); transform: translateY(-4px); }
+.nx-svc-cta {
+  display: inline-flex; align-items: center; gap: 10px; padding-bottom: 6px;
+  font: 600 14px/1 var(--sans); color: var(--gold);
+  background: linear-gradient(var(--gold), var(--gold)) 0 100% / 100% 1px no-repeat;
+  transition: background-size .5s var(--ease), gap .4s var(--ease);
+}
+.nx-svc-cta:hover { gap: 16px; background-size: 0 1px; background-position: 100% 100%; }
+@media (max-width: 1100px) {
+  .nx-svc { grid-template-columns: minmax(140px, 200px) minmax(0, 1fr); }
+  .nx-svc-side { grid-column: 2; }
+}
+@media (max-width: 640px) {
+  .nx-svc { grid-template-columns: minmax(0, 1fr); }
+  .nx-svc-art { max-width: 200px; }
+  .nx-svc-side { grid-column: auto; }
 }

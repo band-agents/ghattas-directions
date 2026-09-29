@@ -129,36 +129,52 @@
 .pc-run-dark b { color: var(--paper); }
 .pc-run-dark i { color: var(--gold-light); }
 
-/* Contents */
-.pc-contents { background: var(--paper-2); padding-block: clamp(56px, 7vw, 96px); }
-.pc-toc-grid { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); gap: 36px 60px; align-items: start; }
-.pc-toc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; }
-.pc-toc li { border-top: 1px solid var(--rule-strong); }
-.pc-toc button { width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 12px; text-align: left; padding: 22px 0 24px; }
-.pc-toc-t { font: 400 26px/1.1 var(--display); transition: color .3s; }
-.pc-toc-lead { border-bottom: 1px dotted var(--rule-strong); transform: translateY(-5px); }
-.pc-toc-p { font: 400 18px/1 var(--display); }
-.pc-toc-p i { color: var(--gold-ink); font-size: 15px; }
-.pc-toc-s { grid-column: 1 / -1; font-size: 14px; color: var(--muted); }
-.pc-toc button:hover .pc-toc-t { color: var(--gold-ink); }
-@media (max-width: 900px) { .pc-toc-grid { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 600px) { .pc-toc { grid-template-columns: minmax(0, 1fr); } }
+/* Your health, your journey */
+.pc-svcs-sec { background: var(--paper-2); }
+.pc-svcs-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 60px; align-items: end; }
+.pc-svcs-head .pc-lead { margin-top: 0; }
+.pc-svcs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: clamp(40px, 5vw, 64px); border-top: 1px solid var(--rule-strong); }
+.pc-svc { padding: 36px 44px 44px 0; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; align-items: flex-start; }
+.pc-svc:nth-child(even) { padding-left: 44px; padding-right: 0; border-left: 1px solid var(--rule); }
+.pc-svc-top { display: flex; align-items: center; gap: 26px; width: 100%; }
+.pc-svc-art { flex: 0 0 auto; width: clamp(130px, 13vw, 170px); aspect-ratio: 1; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); padding: 10px; }
+.pc-svc-n { display: block; font: 400 clamp(56px, 5.6vw, 84px)/0.9 var(--display); color: var(--gold-ink); letter-spacing: -0.02em; }
+.pc-svc-top .pc-kicker { margin-top: 12px; }
+.pc-svc h3 { margin-top: 26px; font: 400 clamp(30px, 3vw, 42px)/1.04 var(--display); letter-spacing: -0.015em; }
+.pc-svc-line { margin-top: 8px; font: italic 400 22px/1.3 var(--display); color: var(--gold-ink); }
+.pc-svc-text { margin-top: 16px; font-size: 16px; line-height: 1.75; color: var(--ink-2); max-width: 52ch; }
+.pc-svc-points { margin: 20px 0 26px; width: 100%; border-top: 1px solid var(--rule); }
+.pc-svc-points li { padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--ink-2); display: flex; gap: 14px; align-items: baseline; }
+.pc-svc-points li::before { content: "·"; font: 400 22px/0 var(--display); color: var(--gold); transform: translateY(2px); }
+.pc-svc .pc-textlink { margin-top: auto; }
+.pc-svc-folio { margin-left: 6px; font: 400 16px/1 var(--display); color: var(--muted); }
+.pc-svc-folio i { color: var(--gold-ink); }
+@media (max-width: 900px) {
+  .pc-svcs-head { grid-template-columns: minmax(0, 1fr); }
+  .pc-svcs { grid-template-columns: minmax(0, 1fr); }
+  .pc-svc, .pc-svc:nth-child(even) { padding: 32px 0 38px; border-left: 0; }
+}
+@media (max-width: 480px) { .pc-svc-top { gap: 18px; } }
 
-/* What we treat */
-.pc-services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(40px, 5vw, 70px); border-top: 1px solid var(--rule-strong); }
-.pc-service { padding: 34px 34px 40px 0; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; align-items: flex-start; }
-.pc-service:not(:nth-child(3n + 1)) { padding-left: 34px; border-left: 1px solid var(--rule); }
-.pc-service-meta { font: 600 11px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--gold-ink); }
-.pc-service h3 { margin-top: 18px; font: 400 32px/1.05 var(--display); letter-spacing: -0.01em; }
-.pc-service-sum { margin-top: 14px; font-size: 16px; color: var(--ink); }
-.pc-service-det { margin-top: 8px; font-size: 14.5px; line-height: 1.7; color: var(--muted); flex: 1; }
-.pc-service .pc-textlink { margin-top: 24px; }
+/* Men's health & beyond */
+.pc-group { margin-top: clamp(40px, 5vw, 64px); }
+.pc-group-head { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); gap: 8px 40px; align-items: baseline; padding-bottom: 18px; }
+.pc-group-head h3 { font: italic 400 30px/1.1 var(--display); color: var(--gold-ink); }
+.pc-group-head p { font-size: 15px; color: var(--ink-2); max-width: 60ch; }
+.pc-services { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rule-strong); }
+.pc-service { padding: 26px 26px 30px 0; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; align-items: flex-start; }
+.pc-service:not(:nth-child(4n + 1)) { padding-left: 26px; border-left: 1px solid var(--rule); }
+.pc-service-meta { font: 600 10.5px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--gold-ink); }
+.pc-service h4 { margin-top: 14px; font: 400 25px/1.1 var(--display); letter-spacing: -0.01em; }
+.pc-service-sum { margin-top: 10px; font-size: 14.5px; line-height: 1.65; color: var(--ink-2); flex: 1; }
+.pc-service .pc-textlink { margin-top: 20px; font-size: 13px; }
 @media (max-width: 1000px) {
   .pc-services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pc-service:not(:nth-child(3n + 1)) { padding-left: 0; border-left: 0; }
-  .pc-service:nth-child(even) { padding-left: 30px; border-left: 1px solid var(--rule); }
+  .pc-service:not(:nth-child(4n + 1)) { padding-left: 0; border-left: 0; }
+  .pc-service:nth-child(even) { padding-left: 24px; border-left: 1px solid var(--rule); }
+  .pc-group-head { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 640px) {
+@media (max-width: 560px) {
   .pc-services { grid-template-columns: minmax(0, 1fr); }
   .pc-service:nth-child(even) { padding-left: 0; border-left: 0; }
 }

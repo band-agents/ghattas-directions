@@ -54,9 +54,9 @@ export function Mark({
   );
 }
 
-/** GHATTAS over CLINIC, each line coloured separately. Sized by height. */
+/** GHATTAS over FOR MEN'S HEALTH, each line coloured separately. Sized by height. */
 export function Wordmark({
-  logo, height, name = "currentColor", sub, className, title = "Ghattas Clinic",
+  logo, height, name = "currentColor", sub, className, title = "Ghattas, for Men's Health",
 }: {
   logo: LogoKey; height: number | string; name?: Fill; sub?: Fill; className?: string; title?: string;
 }) {
