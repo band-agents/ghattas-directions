@@ -163,7 +163,7 @@ function Abroad({ p, t }: { p: GlyphProps; t: number }) {
 
 /* ── Men's Health & Beyond ───────────────────────────────── */
 
-const ORBIT = ["Urology", "Andrology", "Sexual health", "Fertility", "Aesthetics", "Skin & hair"];
+const ORBIT = ["Andrology", "Sexual health", "Aesthetics", "Dermatology", "Hair", "Nutrition"];
 
 function Beyond({ p, t }: { p: GlyphProps; t: number }) {
   const spin = t * 60; // six-fold, so a 60° turn is a seamless loop

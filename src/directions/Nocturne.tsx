@@ -7,7 +7,8 @@
  * band of brushed gold where the numbers sit. Cormorant for display, Manrope
  * for everything that has to be read at size.
  *
- * Mood: a members' club after hours. Private, quiet, expensive.
+ * Eight pages (see PAGES in content.ts). Sections are components; each page is
+ * a list of them under a page head. Mood: a members' club after hours.
  */
 
 import { useState } from "react";
@@ -16,20 +17,24 @@ import { ArrowRight, CalendarCheck, Menu, MessageCircle, X } from "lucide-react"
 
 import { Lockup, Mark, Wordmark } from "@/brand/Logo";
 import {
-  ARTICLES, BOOK, BRAND, CORE_SERVICES, EXPERIENCE, GROUPS, JOURNEY, NAV, PASSAGE, PLAN, RECORD, REVIEWS,
-  SIGNATURE, SPECIALTIES, STATS, type Group,
+  ARTICLES, BOOK, BRAND, CORE_SERVICES, EXPERIENCE, EXPERIENCE_PILLARS, GROUPS, HERO_SPECIALTIES, JOURNEY, NAV,
+  PAGES, PASSAGE, PLAN, RECORD, REVIEWS, SIGNATURE, SPECIALTIES, STATS, type Group, type PageId,
 } from "@/content";
-import { CountUp, LivePlayer, Reveal, RevealGroup, RevealItem, RuleDraw, SplitText, scrollToId } from "@/lib/motion";
+import { CountUp, LivePlayer, Reveal, RevealGroup, RevealItem, RuleDraw, SplitText } from "@/lib/motion";
 import { useHeader } from "@/lib/useHeader";
+import { href } from "@/lib/routes";
 import { GLOBE, GlobeHero } from "@/remotion/GlobeHero";
 import { ROUTE, RouteMap, type RouteTheme } from "@/remotion/RouteMap";
 import { GLYPH, ServiceGlyph, type GlyphTheme } from "@/remotion/ServiceGlyph";
+import { Booking } from "@/kit/Booking";
+import { ContactPanel } from "@/kit/ContactPanel";
 import { GOLD, NAVY } from "@/brand/tokens";
 import portrait from "@/media/dr-portrait.webp";
 import "./nocturne.css";
 
 const LOGO = "globeSans" as const;
-const TREATS = ["Urology", "Andrology", "Sexual health", "Fertility"];
+const to = (p: PageId) => href("nocturne", p);
+const UI = { primary: "nx-btn nx-btn-gold", secondary: "nx-btn nx-btn-ghost" };
 
 const GLYPH_THEME: GlyphTheme = {
   line: "rgba(234,201,152,0.78)", accent: GOLD[200], dim: "rgba(234,201,152,0.16)",
@@ -41,22 +46,44 @@ const ROUTE_THEME: RouteTheme = {
   dim: "rgba(255,253,250,0.45)", hub: GOLD.logo, font: "Manrope, sans-serif", labelWeight: 500,
 };
 
-export function Nocturne() {
+export function Nocturne({ page }: { page: PageId }) {
   return (
     <div className="nx">
-      <Header />
+      <Header page={page} />
       <main>
-        <Hero />
-        <Services />
-        <Treat />
-        <Care />
-        <Visit />
-        <Numbers />
-        <Doctor />
-        <Passage />
-        <Voices />
-        <Journal />
-        <Doors />
+        {page === "home" && <>
+          <Hero /><Services /><SpecialtyIndex /><Care n="02" /><Numbers /><Doctor n="03" teaser /><Voices n="04" />
+          <Journal n="05" limit={3} /><Doors />
+        </>}
+        {page === "book" && <>
+          <PageHead page="book" />
+          <section className="nx-sec nx-sec-tight"><div className="nx-wrap"><Booking ui={UI} /></div></section>
+          <Visit n="01" />
+        </>}
+        {page === "private" && <>
+          <PageHead page="private" />
+          <Pillars n="01" /><Care n="02" /><Doors />
+        </>}
+        {page === "specialties" && <>
+          <PageHead page="specialties" />
+          <Treat /><Doors />
+        </>}
+        {page === "international" && <>
+          <PageHead page="international" />
+          <Passage n="01" /><Doors />
+        </>}
+        {page === "doctor" && <>
+          <PageHead page="doctor" />
+          <Doctor n="01" /><Numbers /><Voices n="02" /><Doors />
+        </>}
+        {page === "journal" && <>
+          <PageHead page="journal" />
+          <Journal /><Doors />
+        </>}
+        {page === "contact" && <>
+          <PageHead page="contact" />
+          <section className="nx-sec nx-sec-tight"><div className="nx-wrap"><ContactPanel ui={UI} /></div></section>
+        </>}
       </main>
       <Footer />
     </div>
@@ -65,39 +92,38 @@ export function Nocturne() {
 
 /* ── Chrome ───────────────────────────────────────────────── */
 
-function Header() {
+function Header({ page }: { page: PageId }) {
   const { scrolled, open, setOpen } = useHeader();
-  const go = (id: string) => { setOpen(false); scrollToId(id); };
   return (
-    <header className={`nx-head${scrolled ? " is-solid" : ""}`}>
+    <header className={`nx-head${scrolled || page !== "home" ? " is-solid" : ""}`}>
       <div className="nx-wrap nx-head-in">
-        <button className="nx-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Ghattas Clinic, back to top">
+        <a className="nx-logo" href={to("home")} aria-label="Ghattas, for Men's Health: home">
           <Lockup logo={LOGO} height={50} mark="brushed" name="#FFFDFA" sub={GOLD.logo} />
-        </button>
-        <nav className="nx-links" aria-label="Sections">
-          {NAV.map((n) => <button key={n.target} onClick={() => go(n.target)}>{n.label}</button>)}
+        </a>
+        <nav className="nx-links" aria-label="Pages">
+          {NAV.map((p) => <a key={p} href={to(p)} aria-current={p === page ? "page" : undefined}>{PAGES[p].nav}</a>)}
         </nav>
         <div className="nx-head-cta">
           <a className="nx-ghost-link" href={BRAND.whatsappHref} target="_blank" rel="noreferrer">
             <MessageCircle size={15} /> Ask privately
           </a>
-          <button className="nx-btn nx-btn-gold nx-btn-sm" onClick={() => go("doors")}>Book</button>
+          <a className="nx-btn nx-btn-gold nx-btn-sm" href={to("book")}>Book</a>
           <button className="nx-burger" onClick={() => setOpen(true)} aria-label="Open menu"><Menu size={22} /></button>
         </div>
       </div>
       {open && (
         <div className="nx-menu" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="nx-wrap nx-menu-top">
-            <Lockup logo={LOGO} height={34} mark="brushed" name="#FFFDFA" sub={GOLD.logo} />
+            <Lockup logo={LOGO} height={40} mark="brushed" name="#FFFDFA" sub={GOLD.logo} />
             <button onClick={() => setOpen(false)} aria-label="Close menu"><X size={24} /></button>
           </div>
           <nav className="nx-wrap nx-menu-list">
-            {NAV.map((n, i) => (
-              <button key={n.target} onClick={() => go(n.target)}>
-                <span className="u-tnum">{String(i + 1).padStart(2, "0")}</span>{n.label}
-              </button>
+            {(["home", ...NAV] as PageId[]).map((p, i) => (
+              <a key={p} href={to(p)} onClick={() => setOpen(false)} aria-current={p === page ? "page" : undefined}>
+                <span className="u-tnum">{String(i + 1).padStart(2, "0")}</span>{PAGES[p].nav}
+              </a>
             ))}
-            <button className="nx-btn nx-btn-gold" onClick={() => go("doors")}>Book a private consultation</button>
+            <a className="nx-btn nx-btn-gold" href={to("book")} onClick={() => setOpen(false)}>Book a private consultation</a>
           </nav>
         </div>
       )}
@@ -115,7 +141,36 @@ function Chapter({ n, a, b }: { n: string; a: string; b: string }) {
   );
 }
 
-/* ── Hero ─────────────────────────────────────────────────── */
+/** Every inner page opens the same way: breadcrumb, kicker, title, and the service's points. */
+function PageHead({ page }: { page: PageId }) {
+  const p = PAGES[page];
+  const sv = CORE_SERVICES.find((s) => s.id === p.service);
+  return (
+    <section className="nx-phead">
+      <Mark logo={LOGO} height="170%" fill={GOLD.logo} outline={1} className="nx-phead-ghost" />
+      <div className="nx-wrap nx-phead-grid">
+        <div>
+          <p className="nx-crumb"><a href={to("home")}>Home</a><span aria-hidden>/</span>{p.nav}</p>
+          <p className="nx-kicker">{p.kicker}</p>
+          <SplitText as="h1" onMount delay={0.1} text={p.title} accent={p.accent} className="nx-h1 nx-h1-page" />
+          {p.line && <Reveal delay={0.3}><p className="nx-phead-line">{p.line}</p></Reveal>}
+          <Reveal delay={0.4}><p className="nx-lead">{p.intro}</p></Reveal>
+        </div>
+        {sv && (
+          <Reveal delay={0.5} className="nx-phead-aside">
+            <div className="nx-phead-art">
+              <LivePlayer component={ServiceGlyph} inputProps={{ ...GLYPH_THEME, kind: sv.id }}
+                width={GLYPH.width} height={GLYPH.height} frames={GLYPH.frames} still={40} label={`${sv.name}: ${sv.line}`} />
+            </div>
+            <ul className="nx-svc-points">{sv.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
+          </Reveal>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ── Home: hero ───────────────────────────────────────────── */
 
 function Hero() {
   return (
@@ -130,20 +185,18 @@ function Hero() {
           <Reveal delay={0.5} className="nx-hero-lead">
             <RuleDraw className="nx-rule-short" delay={0.7} />
             <p>
-              {PLAN.bioShort} Led by {BRAND.doctor}, {BRAND.title.toLowerCase()} and founder of {BRAND.institution},
-              with more than {BRAND.years} years of clinical experience.
+              {PLAN.bioShort} Led by {BRAND.doctor}, founder of {BRAND.institution}, with more than {BRAND.years} years
+              of clinical experience.
             </p>
           </Reveal>
           <Reveal delay={0.62} className="nx-hero-cta">
-            <button className="nx-btn nx-btn-gold" onClick={() => scrollToId("doors")}>
-              <CalendarCheck size={17} /> Book a private consultation
-            </button>
+            <a className="nx-btn nx-btn-gold" href={to("book")}><CalendarCheck size={17} /> Book a private consultation</a>
             <a className="nx-btn nx-btn-ghost" href={BRAND.whatsappHref} target="_blank" rel="noreferrer">
               <MessageCircle size={16} /> Ask on WhatsApp
             </a>
           </Reveal>
           <Reveal delay={0.74}>
-            <ul className="nx-treats">{TREATS.map((t) => <li key={t}>{t}</li>)}</ul>
+            <ul className="nx-treats">{HERO_SPECIALTIES.map((t) => <li key={t}>{t}</li>)}</ul>
           </Reveal>
         </div>
         <motion.div
@@ -155,7 +208,7 @@ function Hero() {
           <LivePlayer
             component={GlobeHero}
             width={GLOBE.width} height={GLOBE.height} frames={GLOBE.frames}
-            label="Dr. Osama Ghattas seated in front of the Ghattas Clinic globe mark, drawn in gold lines and turning slowly"
+            label="Dr. Osama Ghattas seated in front of the Ghattas globe mark, drawn in gold lines and turning slowly"
           />
         </motion.div>
       </div>
@@ -171,7 +224,7 @@ function Hero() {
   );
 }
 
-/* ── Your health, your journey ───────────────────────────── */
+/* ── Home: the four services ─────────────────────────────── */
 
 function Services() {
   return (
@@ -192,28 +245,43 @@ function Services() {
         <RevealGroup className="nx-svcs" each={0.1}>
           {CORE_SERVICES.map((sv, i) => (
             <RevealItem as="article" key={sv.id} className="nx-svc">
-              <div className="nx-svc-art">
+              <a className="nx-svc-art" href={to(sv.page)} tabIndex={-1} aria-hidden>
                 <LivePlayer
                   component={ServiceGlyph} inputProps={{ ...GLYPH_THEME, kind: sv.id }}
                   width={GLYPH.width} height={GLYPH.height} frames={GLYPH.frames} still={40}
                   label={`${sv.name}: ${sv.line}`}
                 />
-              </div>
+              </a>
               <div className="nx-svc-body">
                 <p className="nx-svc-k"><span className="u-tnum">{String(i + 1).padStart(2, "0")}</span>{sv.kicker}</p>
-                <h3>{sv.name}</h3>
+                <h3><a href={to(sv.page)}>{sv.name}</a></h3>
                 <p className="nx-svc-line">{sv.line}</p>
                 <p className="nx-svc-text">{sv.body}</p>
               </div>
               <div className="nx-svc-side">
                 <ul className="nx-svc-points">{sv.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
-                <button className="nx-svc-cta" onClick={() => scrollToId(sv.target)}>
-                  {sv.cta} <ArrowRight size={16} />
-                </button>
+                <a className="nx-svc-cta" href={to(sv.page)}>{sv.cta} <ArrowRight size={16} /></a>
               </div>
             </RevealItem>
           ))}
         </RevealGroup>
+      </div>
+    </section>
+  );
+}
+
+/** Every specialty by name, on the home page, so none is only one click deep. */
+function SpecialtyIndex() {
+  return (
+    <section className="nx-index" aria-label="Specialties">
+      <div className="nx-wrap nx-index-grid">
+        {GROUP_ORDER.map((gk) => (
+          <Reveal key={gk} className="nx-index-col">
+            <p className="nx-label">{GROUPS[gk].title}</p>
+            <ul>{SPECIALTIES.filter((s) => s.group === gk).map((s) => <li key={s.id}><a href={to("specialties")}>{s.name}</a></li>)}</ul>
+          </Reveal>
+        ))}
+        <a className="nx-svc-cta nx-index-cta" href={to("specialties")}>All specialties <ArrowRight size={16} /></a>
       </div>
     </section>
   );
@@ -230,18 +298,6 @@ function Treat() {
   return (
     <section className="nx-sec" id="treat">
       <div className="nx-wrap">
-        <div className="nx-sec-head">
-          <Chapter n="02" a="Men's health" b="& beyond" />
-          <div>
-            <SplitText text="Complete care for the modern man." className="nx-h2" accent={["modern", "man."]} />
-            <Reveal delay={0.1}>
-              <p className="nx-lead">
-                Urology, andrology, sexual health and fertility with {BRAND.doctorShort}, plus complementary specialties
-                under the same private roof.
-              </p>
-            </Reveal>
-          </div>
-        </div>
         <div className="nx-treat">
           <div className="nx-treat-list">
             {GROUP_ORDER.map((gk) => (
@@ -279,9 +335,7 @@ function Treat() {
                 <div><dt>Group</dt><dd>{g.title}</dd></div>
                 <div><dt>Seen by</dt><dd>{s.group === "core" ? BRAND.doctor : g.by}</dd></div>
               </dl>
-              <button className="nx-btn nx-btn-gold" onClick={() => scrollToId("doors")}>
-                Book {s.short.toLowerCase()} <ArrowRight size={16} />
-              </button>
+              <a className="nx-btn nx-btn-gold" href={to("book")}>Book {s.short.toLowerCase()} <ArrowRight size={16} /></a>
             </motion.div>
           </aside>
         </div>
@@ -290,14 +344,42 @@ function Treat() {
   );
 }
 
+/* ── Private care: the plan's four pillars ──────────────── */
+
+function Pillars({ n }: { n: string }) {
+  return (
+    <section className="nx-sec" id="experience">
+      <div className="nx-wrap">
+        <div className="nx-sec-head">
+          <Chapter n={n} a="The" b="experience" />
+          <div>
+            <SplitText text={`${EXPERIENCE_PILLARS.title}.`} className="nx-h2" accent={["experience."]} />
+            <Reveal delay={0.1}><p className="nx-lead">{EXPERIENCE_PILLARS.intro}</p></Reveal>
+          </div>
+        </div>
+        <RevealGroup className="nx-pillars nx-pillars-4" each={0.09}>
+          {EXPERIENCE_PILLARS.pillars.map((p, i) => (
+            <RevealItem key={p.title} className="nx-pillar">
+              <RuleDraw className="nx-rule" />
+              <span className="nx-pillar-n u-tnum">{String(i + 1).padStart(2, "0")}</span>
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
+    </section>
+  );
+}
+
 /* ── Signature Care ───────────────────────────────────────── */
 
-function Care() {
+function Care({ n }: { n: string }) {
   return (
     <section className="nx-sec nx-care" id="care">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="03" a="Signature" b="Care" />
+          <Chapter n={n} a="Signature" b="Care" />
           <div>
             <SplitText text={SIGNATURE.intro} className="nx-h2" accent={["Signature", "Care"]} />
             <Reveal delay={0.1}><p className="nx-lead">{SIGNATURE.meaning}</p></Reveal>
@@ -326,12 +408,12 @@ function Care() {
 
 /* ── The visit ────────────────────────────────────────────── */
 
-function Visit() {
+function Visit({ n }: { n: string }) {
   return (
     <section className="nx-sec nx-visit" id="visit">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="04" a="The" b="visit" />
+          <Chapter n={n} a="The" b="visit" />
           <SplitText text="A visit, start to finish." className="nx-h2" accent={["finish."]} />
         </div>
         <div className="nx-steps">
@@ -379,7 +461,7 @@ function Numbers() {
 
 /* ── The consultant ───────────────────────────────────────── */
 
-function Doctor() {
+function Doctor({ n, teaser }: { n: string; teaser?: boolean }) {
   return (
     <section className="nx-sec" id="doctor">
       <div className="nx-wrap nx-doc">
@@ -390,19 +472,20 @@ function Doctor() {
           <span className="nx-doc-cap">{BRAND.doctor}<br /><em>{BRAND.title}</em></span>
         </Reveal>
         <div className="nx-doc-copy">
-          <Chapter n="05" a="Your" b="consultant" />
+          <Chapter n={n} a="Your" b="consultant" />
           <SplitText text="One doctor, from the first visit to the last." className="nx-h2" accent={["One", "doctor,"]} />
           <Reveal delay={0.1}>
             <p className="nx-lead">{BOOK.positioning}</p>
             <p className="nx-muted nx-doc-more">{BOOK.positioningMore}</p>
           </Reveal>
           <RevealGroup as="ul" className="nx-record" each={0.08}>
-            {RECORD.map(([n, l]) => (
-              <RevealItem as="li" key={l}><span className="nx-record-n">{n}</span><span>{l}</span></RevealItem>
+            {RECORD.map(([num, l]) => (
+              <RevealItem as="li" key={l}><span className="nx-record-n">{num}</span><span>{l}</span></RevealItem>
             ))}
           </RevealGroup>
           <Reveal delay={0.2} className="nx-doc-cta">
-            <button className="nx-btn nx-btn-gold" onClick={() => scrollToId("doors")}><CalendarCheck size={17} /> Book with {BRAND.doctorShort}</button>
+            <a className="nx-btn nx-btn-gold" href={to("book")}><CalendarCheck size={17} /> Book with {BRAND.doctorShort}</a>
+            {teaser && <a className="nx-btn nx-btn-ghost" href={to("doctor")}>About {BRAND.doctorShort} <ArrowRight size={16} /></a>}
           </Reveal>
         </div>
       </div>
@@ -412,12 +495,12 @@ function Doctor() {
 
 /* ── From abroad ──────────────────────────────────────────── */
 
-function Passage() {
+function Passage({ n }: { n: string }) {
   return (
     <section className="nx-sec nx-passage" id="passage">
       <div className="nx-wrap nx-passage-grid">
         <div>
-          <Chapter n="06" a="From" b="abroad" />
+          <Chapter n={n} a="Ghattas" b="Passage" />
           <SplitText text={PASSAGE.name} className="nx-h2" accent={["Passage"]} />
           <Reveal delay={0.1}><p className="nx-lead">{PASSAGE.lead}</p></Reveal>
           <RevealGroup as="ol" className="nx-passage-steps" each={0.08}>
@@ -428,12 +511,15 @@ function Passage() {
               </RevealItem>
             ))}
           </RevealGroup>
+          <Reveal delay={0.2}>
+            <a className="nx-btn nx-btn-gold nx-passage-cta" href={to("contact")}>Plan your medical journey <ArrowRight size={16} /></a>
+          </Reveal>
         </div>
         <Reveal delay={0.1} className="nx-passage-map">
           <LivePlayer
             component={RouteMap} inputProps={ROUTE_THEME}
             width={ROUTE.width} height={ROUTE.height} frames={ROUTE.frames} still={60}
-            label="Map centred on Cairo showing flight routes from Riyadh, Jeddah, Kuwait, Dubai, Amman, Khartoum, Tripoli, Lagos and London, each at its true bearing and distance"
+            label="Map centred on Cairo showing flight routes from the Gulf, Africa and Europe, each at its true bearing and distance"
           />
           <p className="nx-map-note">Bearing and distance from Cairo are true. The cities shown are illustrative.</p>
         </Reveal>
@@ -444,12 +530,12 @@ function Passage() {
 
 /* ── Voices ───────────────────────────────────────────────── */
 
-function Voices() {
+function Voices({ n }: { n: string }) {
   return (
     <section className="nx-sec nx-voices" id="voices">
       <div className="nx-wrap">
         <div className="nx-sec-head">
-          <Chapter n="07" a="In their" b="words" />
+          <Chapter n={n} a="In their" b="words" />
           <SplitText text="What men say afterwards." className="nx-h2" accent={["afterwards."]} />
         </div>
         <RevealGroup className="nx-quotes" each={0.1}>
@@ -469,26 +555,29 @@ function Voices() {
 
 /* ── Journal ──────────────────────────────────────────────── */
 
-function Journal() {
+function Journal({ n, limit }: { n?: string; limit?: number }) {
+  const list = limit ? ARTICLES.slice(0, limit) : ARTICLES;
   return (
     <section className="nx-sec" id="journal">
       <div className="nx-wrap">
-        <div className="nx-sec-head">
-          <Chapter n="08" a="The" b="journal" />
-          <SplitText text="Written by the clinic, not by an agency." className="nx-h2" accent={["clinic,"]} />
-        </div>
+        {n && (
+          <div className="nx-sec-head">
+            <Chapter n={n} a="The" b="journal" />
+            <SplitText text="Written by the clinic, not by an agency." className="nx-h2" accent={["clinic,"]} />
+          </div>
+        )}
         <RevealGroup as="ul" className="nx-articles" each={0.08}>
-          {ARTICLES.map((a) => (
+          {list.map((a) => (
             <RevealItem as="li" key={a.title}>
-              <a className="nx-article" href="#nocturne" onClick={(e) => e.preventDefault()}>
+              <div className="nx-article">
                 <span className="nx-article-c">{a.category}</span>
-                <span className="nx-article-t">{a.title}</span>
+                <span className="nx-article-t">{a.title}<span className="nx-article-e">{a.excerpt}</span></span>
                 <span className="nx-article-m u-tnum">{a.minutes} min read</span>
-                <ArrowRight size={20} className="nx-article-a" />
-              </a>
+              </div>
             </RevealItem>
           ))}
         </RevealGroup>
+        {n && <Reveal><a className="nx-svc-cta nx-more" href={to("journal")}>All articles <ArrowRight size={16} /></a></Reveal>}
       </div>
     </section>
   );
@@ -504,13 +593,13 @@ function Doors() {
           <span className="nx-label nx-label-dark">New patient</span>
           <h2>Book without picking up the phone.</h2>
           <p>Choose what you need, a day and a time. Confirmation is immediate, and nothing we send you names the service.</p>
-          <button className="nx-btn nx-btn-navy"><CalendarCheck size={17} /> Start booking</button>
+          <a className="nx-btn nx-btn-navy" href={to("book")}><CalendarCheck size={17} /> Start booking</a>
         </RevealItem>
         <RevealItem className="nx-door">
           <span className="nx-label">Returning patient</span>
           <h2>Everything from your last visit, waiting.</h2>
           <p>Scans, blood results, prescriptions and your written plan in one place, with discreet mode on by default.</p>
-          <button className="nx-btn nx-btn-ghost">Open the patient portal <ArrowRight size={16} /></button>
+          <a className="nx-btn nx-btn-ghost" href={to("contact")}>Ask about the patient portal <ArrowRight size={16} /></a>
         </RevealItem>
       </RevealGroup>
     </section>
@@ -527,6 +616,9 @@ function Footer() {
           <Wordmark logo={LOGO} height={72} name="#FFFDFA" sub={GOLD.logo} />
           <p className="nx-foot-promise">{PLAN.closing[0]}<br />{PLAN.closing[1]}</p>
         </div>
+        <nav className="nx-foot-nav" aria-label="All pages">
+          {(["home", "book", ...NAV] as PageId[]).map((p) => <a key={p} href={to(p)}>{PAGES[p].nav}</a>)}
+        </nav>
         <div className="nx-foot-grid">
           <div><span className="nx-label">Visit</span><p>{BRAND.area}</p><p className="nx-muted">{BRAND.hoursNote}</p></div>
           <div><span className="nx-label">Hours</span><p>{BRAND.hours}</p></div>

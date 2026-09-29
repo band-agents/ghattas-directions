@@ -98,7 +98,7 @@ export const CORE_SERVICES = [
       "Arabic and English",
     ],
     cta: "Book Your Appointment",
-    target: "doors",
+    page: "book",
   },
   {
     id: "private",
@@ -114,7 +114,7 @@ export const CORE_SERVICES = [
       "Discreet records and follow-up",
     ],
     cta: "Discover Private Care",
-    target: "care",
+    page: "private",
   },
   {
     id: "abroad",
@@ -130,25 +130,37 @@ export const CORE_SERVICES = [
       "For you and your family, from the GCC and beyond",
     ],
     cta: "Plan Your Medical Journey",
-    target: "passage",
+    page: "international",
   },
   {
     id: "beyond",
     name: "Men's Health & Beyond",
     kicker: "Multidisciplinary care",
     line: "Complete care for the modern man.",
-    body: "Urology, andrology, sexual health and fertility, plus complementary services like men's aesthetics & plastic surgery.",
+    body: "Andrology and sexual health, plus complementary services like men's aesthetics & plastic surgery.",
     points: [
-      "Urology and andrology",
-      "Sexual health and fertility",
+      "Andrology and sexual health",
       "Men's aesthetics & plastic surgery",
-      "Skin, hair and hormonal health",
-      "Personalized wellness programmes",
+      "Dermatology, skin and hair transplant",
+      "Nutrition, hormones and endocrinology",
+      "Pain management, psychotherapy, pediatric surgery",
     ],
     cta: "Explore Our Services",
-    target: "treat",
+    page: "specialties",
   },
 ] as const;
+
+/** The plan's brand experience: "four pillars define every patient touchpoint". */
+export const EXPERIENCE_PILLARS = {
+  title: "The Men's Health experience",
+  intro: "Four pillars define every patient touchpoint, from the website to the waiting room.",
+  pillars: [
+    { title: "Private", body: "Your healthcare journey is designed around discretion and confidentiality." },
+    { title: "Personal", body: "Every patient receives individual attention and a journey tailored to their needs." },
+    { title: "Expert", body: "Specialized medical expertise sits at the center of every decision." },
+    { title: "Seamless", body: "From online booking to treatment and follow-up, every step is connected." },
+  ],
+} as const;
 
 /** The five parts of the clinic experience, in the book's order. */
 export const EXPERIENCE = [
@@ -187,9 +199,11 @@ export const PERSONALITY = [
 export type Group = "core" | "beyond";
 
 /**
- * Men's Health & Beyond, as the plan lists it: the core specialties Dr. Ghattas
- * treats himself, then the complementary specialties hosted on site or reached
- * through the clinic's network. Summaries are the plan's where it gives one;
+ * Men's Health & Beyond, as the plan lists it: the two core specialties Dr.
+ * Ghattas treats himself (Andrology, Sexual Health), then the eight growth
+ * services in the plan's own order, hosted on site or reached through the
+ * clinic's network. Urology and Fertility were removed at the client's request
+ * (2026-09-29) and must not come back. Summaries are the plan's where it gives one;
  * the rest are ours and marked.
  */
 export const GROUPS: Record<Group, { title: string; note: string; by: string }> = {
@@ -208,16 +222,14 @@ export const GROUPS: Record<Group, { title: string; note: string; by: string }> 
 export const SPECIALTIES: { id: string; name: string; short: string; group: Group; summary: string }[] = [
   { id: "andrology", name: "Andrology", short: "Andrology", group: "core", summary: "Erectile function, performance and male sexual health." /* ours */ },
   { id: "sexual", name: "Sexual Health", short: "Sexual health", group: "core", summary: "Confidential assessment and treatment of sexual function and wellbeing." /* ours */ },
-  { id: "urology", name: "Urology", short: "Urology", group: "core", summary: "Prostate, urinary symptoms, stones and infections." /* ours */ },
-  { id: "fertility", name: "Male Fertility", short: "Fertility", group: "core", summary: "Semen analysis, varicocele assessment and fertility planning." /* ours */ },
   { id: "aesthetics", name: "Men's Aesthetics & Plastic Surgery", short: "Aesthetics", group: "beyond", summary: "Partner surgeons hosted on site for consultations and procedures." },
   { id: "skin", name: "Dermatology & Skin Health", short: "Skin health", group: "beyond", summary: "Male-focused skin, hair and grooming treatments." },
   { id: "hair", name: "Hair Transplant", short: "Hair", group: "beyond", summary: "Transplant and regrowth referrals through the clinic network." },
+  { id: "pediatric", name: "Pediatric Surgery", short: "Pediatric", group: "beyond", summary: "Surgical care for children, through the same private route." /* ours */ },
   { id: "nutrition", name: "Nutrition & Hormonal Health", short: "Nutrition", group: "beyond", summary: "Wellness and performance-focused specialist add-ons." },
   { id: "endocrinology", name: "Endocrinology", short: "Endocrinology", group: "beyond", summary: "Hormonal and metabolic care from visiting specialists." /* ours */ },
   { id: "pain", name: "Pain Management", short: "Pain", group: "beyond", summary: "Specialist care for chronic and persistent pain." /* ours */ },
   { id: "psychotherapy", name: "Psychotherapy", short: "Psychotherapy", group: "beyond", summary: "Confidential support for the mind as well as the body." /* ours */ },
-  { id: "pediatric", name: "Pediatric Surgery", short: "Pediatric", group: "beyond", summary: "Surgical care for children, through the same private route." /* ours */ },
 ];
 
 export const JOURNEY = [
@@ -281,12 +293,12 @@ export const REVIEWS = [
   },
   {
     initials: "K. S.",
-    context: "Executive screening",
+    context: "Andrology",
     body: "Bloods, ultrasound and ECG in one morning, and one doctor who read all of it together instead of handing me three envelopes.",
   },
   {
     initials: "H. F.",
-    context: "Male fertility",
+    context: "Sexual health",
     body: "He explained the results to my wife and to me differently, because we needed to hear different things. That is not a small skill.",
   },
 ] as const;
@@ -299,10 +311,10 @@ export const ARTICLES = [
     excerpt: "Tiredness alone proves nothing. What the symptoms and the numbers have to look like before treatment is the right answer.",
   },
   {
-    title: "Half of fertility difficulty is male. Most of it is never checked.",
-    category: "Fertility",
+    title: "Erectile difficulty is usually physical, and usually treatable",
+    category: "Andrology",
     minutes: 5,
-    excerpt: "A full male workup is one visit and one lab run. It changes the plan for the couple more often than anyone expects.",
+    excerpt: "Most cases have a physical cause that a basic workup finds quickly: vascular, hormonal or medication-related.",
   },
   {
     title: "What we mean when we say the visit is private",
@@ -312,29 +324,86 @@ export const ARTICLES = [
   },
 ] as const;
 
-export const NAV = [
-  { label: "Services", target: "services" },
-  { label: "Signature Care", target: "care" },
-  { label: "Dr. Ghattas", target: "doctor" },
-  { label: "International", target: "passage" },
-  { label: "Journal", target: "journal" },
-] as const;
+/* ── Pages ──────────────────────────────────────────────── */
 
 /**
- * The hierarchy all three directions share, top to bottom. The overview page
- * prints this as the comparison table, so it is also the section contract:
- * every direction renders one block per id, in this order.
+ * The site map all three directions share. Every direction renders the same
+ * eight pages with the same sections in the same order; only the design
+ * differs. The overview prints this as its page-by-page table.
+ *
+ * The four core services each own a page: Take an Appointment is Book, Own
+ * the Clinic is Private Care, Come From Abroad is International, and Men's
+ * Health & Beyond is the specialties page.
  */
-export const HIERARCHY = [
-  { id: "hero", name: "Hero", job: "Say what this is and who runs it, with the booking button in reach." },
-  { id: "services", name: "Your Health, Your Journey", job: "The four core services patients engage with first." },
-  { id: "treat", name: "Men's Health & Beyond", job: "Core specialties with Dr. Ghattas, then the complementary ones." },
-  { id: "care", name: "Signature Care", job: "Why here: the five pillars from the brand book." },
-  { id: "visit", name: "The visit", job: "What happens, in order, so a first visit feels known." },
-  { id: "numbers", name: "By the numbers", job: "Proof in four figures, each with its source." },
-  { id: "doctor", name: "The consultant", job: "Dr. Ghattas, his record, and the one-doctor promise." },
-  { id: "passage", name: "From abroad", job: "Ghattas Passage for international patients." },
-  { id: "voices", name: "In their words", job: "Three patient voices, initials only." },
-  { id: "journal", name: "Journal", job: "Written by the clinic, for search and for trust." },
-  { id: "doors", name: "Two doors", job: "New patients book; returning patients open the portal." },
-] as const;
+export type PageId = "home" | "book" | "private" | "specialties" | "international" | "doctor" | "journal" | "contact";
+
+export interface PageInfo {
+  nav: string;
+  kicker: string;
+  title: string;
+  /** Words in the title set in the accent voice. */
+  accent: string[];
+  line?: string;
+  intro: string;
+  /** Which core service this page is, if any; its points go in the page head. */
+  service?: (typeof CORE_SERVICES)[number]["id"];
+  sections: string[];
+  job: string;
+}
+
+export const PAGES: Record<PageId, PageInfo> = {
+  home: {
+    nav: "Home", kicker: "Men's Health", title: PLAN.slogan, accent: ["Perspective"], intro: PLAN.bioShort,
+    sections: ["Hero", "Your Health, Your Journey", "Signature Care", "By the numbers", "Your consultant", "In their words", "Journal", "Two doors"],
+    job: "Say what this is, then send each visitor to the one of four services he came for.",
+  },
+  book: {
+    nav: "Book", kicker: "Take an Appointment", title: "Book your visit online.", accent: ["online."],
+    line: "Your time matters.", intro: CORE_SERVICES[0].body, service: "appointment",
+    sections: ["Booking", "The visit"],
+    job: "Book in a minute: what for, a day and a time, your details, confirmation.",
+  },
+  private: {
+    nav: "Private Care", kicker: "Own the Clinic", title: "The clinic, for you alone.", accent: ["alone."],
+    line: "Your privacy comes first.", intro: CORE_SERVICES[1].body, service: "private",
+    sections: ["The Men's Health experience", "Signature Care", "Two doors"],
+    job: "Show what private means here, in the plan's four pillars and the book's Signature Care.",
+  },
+  specialties: {
+    nav: "Men's Health", kicker: "Men's Health & Beyond", title: "Complete care for the modern man.", accent: ["modern", "man."],
+    intro: CORE_SERVICES[3].body, service: "beyond",
+    sections: ["Core specialties", "New & complementary", "Two doors"],
+    job: "Answer 'is this for my problem?': two core specialties, eight complementary ones.",
+  },
+  international: {
+    nav: "International", kicker: "Come From Abroad", title: "From your flight to your follow-up.", accent: ["follow-up."],
+    intro: CORE_SERVICES[2].body, service: "abroad",
+    sections: ["Ghattas Passage", "Two doors"],
+    job: "Ghattas Passage: the route map, the package and the concierge.",
+  },
+  doctor: {
+    nav: "Dr. Ghattas", kicker: "Your consultant", title: "Dr. Osama Ghattas.", accent: ["Ghattas."],
+    line: BRAND.title, intro: BOOK.overview[0],
+    sections: ["The record", "By the numbers", "In their words", "Two doors"],
+    job: "The man behind the name: his record, his figures, and what patients say.",
+  },
+  journal: {
+    nav: "Journal", kicker: "Journal", title: "Men's health, explained simply.", accent: ["simply."],
+    intro: "Myths and facts about men's health, written by the clinic rather than by an agency.",
+    sections: ["Articles", "Two doors"],
+    job: "Educational articles, for search and for trust.",
+  },
+  contact: {
+    nav: "Contact", kicker: "Contact", title: "A direct line to the clinic.", accent: ["direct"],
+    intro: "WhatsApp, phone or email, for booking, reminders and follow-up. Visits are by appointment only.",
+    sections: ["Details", "Enquiry"],
+    job: "Every way to reach the clinic, and a short enquiry form.",
+  },
+};
+
+/** Header order. Book is the button, not a link. */
+export const NAV: PageId[] = ["private", "specialties", "international", "doctor", "journal", "contact"];
+/** Short names for hero chips: the two core specialties, then two growth services. */
+export const HERO_SPECIALTIES = ["Andrology", "Sexual health", "Men's aesthetics", "Skin & hair"];
+
+export const PAGE_ORDER: PageId[] = ["home", "book", "private", "specialties", "international", "doctor", "journal", "contact"];

@@ -16,7 +16,8 @@ import type { ComponentType } from "react";
 
 import { Mark, Wordmark, type LogoKey } from "@/brand/Logo";
 import { BRUSHED_CSS, GOLD, NAVY } from "@/brand/tokens";
-import { BOOK, HIERARCHY, PERSONALITY } from "@/content";
+import { BOOK, PAGES, PAGE_ORDER, PERSONALITY } from "@/content";
+import { href, type DirId } from "@/lib/routes";
 import { LivePlayer, Reveal, RevealGroup, RevealItem, scrollToId } from "@/lib/motion";
 import { GLOBE, GlobeHero } from "@/remotion/GlobeHero";
 import { MEDALLION, PorcelainHero } from "@/remotion/PorcelainHero";
@@ -72,7 +73,9 @@ const CHANGES: [string, string, string][] = [
   ["Name", "Elite Clinic", "Ghattas Clinic, For Men's Health"],
   ["Logo line", "CLINIC under the name", "FOR MEN'S HEALTH, as in the marketing plan's approved lockup"],
   ["Slogan", "Our own headline", "A New Perspective on Men's Health"],
-  ["Services", "Six placeholder treatments", "The plan's four core services, then Men's Health & Beyond"],
+  ["Structure", "One long page", "Eight pages: home, one per core service, Dr. Ghattas, journal, contact"],
+  ["Services", "Six placeholder treatments", "The plan's four core services, each with its own page"],
+  ["Specialties", "Placeholder list", "Andrology and Sexual Health, then the plan's eight growth services"],
   ["Logo", "A single-letter G drawn by us", "The book's three official marks, one per direction, taken as vectors from the PDF"],
   ["Colour", "Hospital navy with sand, coral and gold", "Only the book's three: Dark Navy, Luxury Brushed Gold, Porcelain"],
   ["Words", "Our own positioning", "The book and the plan: slogan, bio, Signature Care, tone of voice"],
@@ -80,27 +83,11 @@ const CHANGES: [string, string, string][] = [
 ];
 
 const KEPT = [
-  "The same eleven sections, in the same order, in all three",
+  "The same eight pages, with the same sections, in all three",
   "Dr. Ghattas's portraits, full figure in the hero",
   "Discreet messaging: nothing names the service",
   "The international programme, renamed Ghattas Passage",
 ];
-
-/** How each direction treats each section. Same rows as HIERARCHY. */
-/* Keyed by the hierarchy ids, so a renamed section fails the typecheck instead of the page. */
-const TREATMENT: Record<(typeof HIERARCHY)[number]["id"], [string, string, string]> = {
-  hero: ["The globe G in gold line, turning, with Dr. Ghattas seated in front", "A navy medallion inside the G's ring, personality pairs changing beneath", "A brushed-gold panel cut at 45°, the arrow lifting, facts sliding in"],
-  services: ["Four framed panels, each with its line drawing in gold", "A ruled two-by-two spread, drawings in porcelain medallions, links carry page numbers", "Four cut-corner cards on a diagonal of navy and porcelain"],
-  treat: ["Grouped index list with a sticky detail card", "Two ruled grids: core specialties, then the complementary ones", "Two card grids, core in navy"],
-  care: ["Five pillars under drawn rules, then a marquee of the values", "A drop-cap essay beside the five pillars", "Five pillars climbing as a staircase"],
-  visit: ["Four stops on a gold timeline", "Roman numerals, I to IV", "Outlined 01 to 04 with arrows between"],
-  numbers: ["The one brushed-gold band on the page", "Large Bodoni figures between column rules", "A brushed-gold band with wide numerals"],
-  doctor: ["Framed portrait, the record in gold", "The one navy page, an arched portrait", "A cut-corner panel with the mark behind him"],
-  passage: ["Live route map, gold on navy, curved routes", "Live route map, navy on paper, captioned as a figure", "Live route map, straight routes, capital labels"],
-  voices: ["Three columns in italic serif", "One pull quote, two beneath", "Three cut-corner cards, the middle one navy"],
-  journal: ["A ruled index with gold arrows", "Magazine cards under a heavy rule", "Rows with category chips"],
-  doors: ["Brushed gold beside a hairline navy panel", "One ruled box, navy half and paper half", "Gold and navy blocks with 45° cuts"],
-};
 
 const ASKS = [
   ["Pick a direction", "Or a mix: any direction can wear any of the three logos."],
@@ -149,7 +136,7 @@ function Cover() {
           <Reveal delay={0.15} y={16}>
             <h1>Three ways to build the website on the brand book.</h1>
             <p>
-              Same colours, same marks, same eleven sections in the same order. What changes between them is
+              Same colours, same marks, the same eight pages with the same sections. What changes between them is
               the mood, the type, the layout and the motion.
             </p>
           </Reveal>
@@ -159,7 +146,7 @@ function Cover() {
                 <b>{d.letter}</b>{d.name}<ArrowRight size={15} />
               </a>
             ))}
-            <button className="ov-textlink" onClick={() => scrollToId("compare")}>Compare them section by section</button>
+            <button className="ov-textlink" onClick={() => scrollToId("compare")}>See all eight pages</button>
           </Reveal>
         </div>
         <p className="ov-cover-foot">For Men&apos;s Health</p>
@@ -308,30 +295,36 @@ function Directions() {
   );
 }
 
-/* ── Section by section ───────────────────────────────────── */
+/* ── Page by page ─────────────────────────────────────────── */
 
 function Compare() {
   return (
     <section className="ov-sec ov-compare">
       <div className="ov-wrap">
-        <Head id="compare" title="Section by section" sub="One hierarchy, three treatments" />
+        <Head id="compare" title="Page by page" sub="Eight pages, the same in all three" />
         <div className="ov-table-scroll">
           <table className="ov-table ov-table-compare">
             <thead>
               <tr>
-                <th scope="col">Section</th>
-                {DIRECTIONS.map((d) => <th key={d.id} scope="col"><a href={`#${d.id}`}>{d.letter} · {d.name}</a></th>)}
+                <th scope="col">Page</th>
+                <th scope="col">Sections</th>
+                {DIRECTIONS.map((dd) => <th key={dd.id} scope="col">{dd.letter} · {dd.name}</th>)}
               </tr>
             </thead>
             <tbody>
-              {HIERARCHY.map((h, i) => (
-                <tr key={h.id}>
+              {PAGE_ORDER.map((p, i) => (
+                <tr key={p}>
                   <th scope="row">
                     <span className="u-tnum ov-n">{String(i + 1).padStart(2, "0")}</span>
-                    <b>{h.name}</b>
-                    <span className="ov-job">{h.job}</span>
+                    <b>{PAGES[p].nav}</b>
+                    <span className="ov-job">{PAGES[p].job}</span>
                   </th>
-                  {TREATMENT[h.id].map((t, k) => <td key={k}>{t}</td>)}
+                  <td><ul className="ov-secs">{PAGES[p].sections.map((x) => <li key={x}>{x}</li>)}</ul></td>
+                  {DIRECTIONS.map((dd) => (
+                    <td key={dd.id}>
+                      <a className="ov-open" href={href(dd.id as DirId, p)}>Open <ArrowRight size={14} /></a>
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>

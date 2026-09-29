@@ -1,44 +1,24 @@
 /**
- * One page, four views: the overview board and the three directions.
- *
- * Routed on a bare hash token (#nocturne, not #/nocturne) because the artifact
- * host only passes plain tokens through to location.hash. In-page links
- * therefore never use #anchors — they call scrollToId instead, or they would
- * overwrite the route.
+ * The overview board, then three directions of eight pages each.
+ * Routes: #<direction>/<page> (see lib/routes.ts). Switching direction keeps
+ * the page, so the client can compare the same page across A, B and C.
  */
 
 import { useEffect, useState } from "react";
 import { LayoutGrid } from "lucide-react";
+import { PAGES } from "@/content";
+import { DIRECTIONS, href, readHash, type View } from "@/lib/routes";
 import { Overview } from "@/overview/Overview";
 import { Nocturne } from "@/directions/Nocturne";
 import { Porcelain } from "@/directions/Porcelain";
 import { Ascend } from "@/directions/Ascend";
 
-export const DIRECTIONS = [
-  { id: "nocturne", letter: "A", name: "Nocturne" },
-  { id: "porcelain", letter: "B", name: "Porcelain" },
-  { id: "ascend", letter: "C", name: "Ascend" },
-] as const;
-type View = "overview" | (typeof DIRECTIONS)[number]["id"];
-
-const read = (): View => {
-  const h = window.location.hash.replace(/^#\/?/, "");
-  return (DIRECTIONS.some((d) => d.id === h) ? h : "overview") as View;
-};
-
-const TITLES: Record<View, string> = {
-  overview: "Ghattas Clinic Directions",
-  nocturne: "Ghattas Clinic · A · Nocturne",
-  porcelain: "Ghattas Clinic · B · Porcelain",
-  ascend: "Ghattas Clinic · C · Ascend",
-};
-
 export function App() {
-  const [view, setView] = useState<View>(read);
+  const [view, setView] = useState<View>(readHash);
 
   useEffect(() => {
     const on = () => {
-      setView(read());
+      setView(readHash());
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     };
     window.addEventListener("hashchange", on);
@@ -46,25 +26,27 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    document.title = TITLES[view];
+    if (view.dir === "overview") { document.title = "Ghattas Clinic Directions"; return; }
+    const d = DIRECTIONS.find((x) => x.id === view.dir)!;
+    document.title = `${PAGES[view.page].nav} · Ghattas · ${d.letter} ${d.name}`;
   }, [view]);
+
+  if (view.dir === "overview") return <Overview />;
+  const { dir, page } = view;
 
   return (
     <>
-      {view === "overview" && <Overview />}
-      {view === "nocturne" && <Nocturne />}
-      {view === "porcelain" && <Porcelain />}
-      {view === "ascend" && <Ascend />}
-      {view !== "overview" && (
-        <nav className="sw" aria-label="Switch direction">
-          <a href="#overview" className="sw-home"><LayoutGrid size={14} /><span className="sw-name">Overview</span></a>
-          {DIRECTIONS.map((d) => (
-            <a key={d.id} href={`#${d.id}`} aria-current={view === d.id ? "page" : undefined}>
-              <b>{d.letter}</b><span className="sw-name">{d.name}</span>
-            </a>
-          ))}
-        </nav>
-      )}
+      {dir === "nocturne" && <Nocturne page={page} />}
+      {dir === "porcelain" && <Porcelain page={page} />}
+      {dir === "ascend" && <Ascend page={page} />}
+      <nav className="sw" aria-label="Switch direction">
+        <a href="#overview" className="sw-home"><LayoutGrid size={14} /><span className="sw-name">Overview</span></a>
+        {DIRECTIONS.map((d) => (
+          <a key={d.id} href={href(d.id, page)} aria-current={dir === d.id ? "page" : undefined}>
+            <b>{d.letter}</b><span className="sw-name">{d.name}</span>
+          </a>
+        ))}
+      </nav>
     </>
   );
 }

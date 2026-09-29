@@ -136,8 +136,12 @@
 .ov-table-compare { min-width: 860px; }
 .ov-table-compare thead th a { color: var(--ink); text-decoration: none; }
 .ov-table-compare thead th a:hover { color: var(--gold-ink); }
-.ov-table-compare tbody th { width: 26%; }
-.ov-table-compare td { width: 24.6%; color: var(--ink-2); }
+.ov-table-compare td { color: var(--ink-2); }
+.ov-table-compare tbody th { width: 30%; }
+.ov-secs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ov-secs li { padding: 4px 9px; border: 1px solid var(--rule); font-size: 12.5px; white-space: nowrap; }
+.ov-open { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13.5px; color: var(--ink); text-decoration: none; padding: 7px 12px; border: 1px solid var(--ink); border-radius: 999px; white-space: nowrap; }
+.ov-open:hover { background: var(--navy); color: var(--porcelain); }
 .ov-n { display: block; font-size: 11px; color: var(--gold-ink); letter-spacing: .14em; }
 .ov-table-compare tbody th b { display: block; font: 400 20px/1.2 var(--head); margin-top: 2px; }
 .ov-job { display: block; margin-top: 4px; font-weight: 400; font-size: 13px; color: var(--muted); }
