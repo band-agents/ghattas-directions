@@ -11,10 +11,16 @@ Routes are bare hash tokens: `#overview` (default) · `#nocturne` (A) · `#porce
 In-page links must use `scrollToId`, never `#anchors`, or they overwrite the route.
 
 ## Rules
+- **Second source:** `Downloads/Ghattas_Clinic_Marketing_Plan final.pdf` gives the slogan ("A New
+  Perspective on Men's Health"), bio, the four core services (`CORE_SERVICES`) and the Men's Health &
+  Beyond specialties (`SPECIALTIES`). Summaries it doesn't give are marked `/* ours */`.
 - **Copy lives only in `src/content.ts`.** The three directions share it so the client compares
   design, not words. `BOOK` is the brand book's own language; everything else is PLACEHOLDER.
 - **Logos are vectors extracted from the PDF** (`src/brand/logos.ts`, generated — do not hand-edit).
-  Option 01 → A, 02 → B, 03 → C. Parts stay separate paths: joined under nonzero fill the
+  Option 01 → A, 02 → B, 03 → C. **The book's CLINIC line is gone** (client, 2026-09-29): the
+  sub-line is FOR MEN'S HEALTH, typeset by `scripts/pdf-logos/subline.cjs` (Barlow Semi Condensed
+  for 01/02, matching the marketing plan's approved lockup; DM Serif italic for 03). Rerun it after
+  any regeneration from the PDF. Parts stay separate paths: joined under nonzero fill the
   crossbar/ring overlap cancels into a hole.
 - **Colours are sampled from the book's swatch pages, not its printed hexes** (`src/brand/tokens.ts`).
   The printed gold #E5B335 is not what the book shows; the swatch is a brushed champagne gradient.
